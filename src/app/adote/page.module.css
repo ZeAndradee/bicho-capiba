@@ -92,12 +92,27 @@
 }
 
 .filtersSection {
-  padding: 4rem 0;
+  padding: 4rem 0 1em 0;
   display: flex;
   justify-content: center;
   align-items: center;
   max-width: var(--page-max-width);
   margin: 0 auto;
+}
+
+.feedSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 4rem 0;
+  display: flex;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+}
+
+.feedSection h1 {
+  font-size: 2rem;
+  color: var(--text-color);
 }
 
 @media (max-width: 1200px) {

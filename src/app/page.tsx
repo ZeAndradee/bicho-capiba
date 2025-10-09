@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa6";
 import Link from "next/link";
-import Button from "@/components/ui/Button";
-import AdoptionDonationSections from "@/components/home/AdoptionDonationSections";
+import Button from "@/components/UI/Button/Button";
+import AdoptionDonationSections from "@/components/Home/AdoptionDonationSections";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -11,7 +11,7 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>
-            Encontre seu melhor amigo para sempre:{" "}
+            Encontre seu melhor amigo:{" "}
             <span className={styles.highlight}>adote</span>,{" "}
             <span className={styles.highlight}>ame</span> e seja{" "}
             <span className={styles.highlight}>amado.</span>

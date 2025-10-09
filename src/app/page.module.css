@@ -26,6 +26,7 @@
 }
 
 .highlight {
+  font-family: var(--title-font);
   color: var(--yellow-capiba);
 }
 

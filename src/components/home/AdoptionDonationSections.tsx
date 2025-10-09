@@ -6,20 +6,15 @@ export default function AdoptionDonationSections() {
   return (
     <div className={styles.sectionsContainer}>
       <div className={styles.adoptionSection}>
-        <div className={styles.pawsImageContainer}>
-          <img
-            src="/images/BlurredPaws.png"
-            alt="Patas desfocadas"
-            className={styles.pawsImage}
+        <div className={styles.imageContainer}>
+          <Image
+            src="/images/CatAdoptionCard.png"
+            alt="Gato para adoção"
+            width={228}
+            height={228}
+            className={styles.adoptionImage}
           />
         </div>
-        <Image
-          src="/images/CatAdoptionCard.png"
-          alt="Gato para adoção"
-          width={268}
-          height={268}
-          className={styles.adoptionImage}
-        />
         <div className={styles.adoptionContent}>
           <h2 className={styles.adoptionTitle}>Adote um pet</h2>
           <p className={styles.adoptionSubtitle}>
@@ -35,18 +30,6 @@ export default function AdoptionDonationSections() {
       </div>
 
       <div className={styles.donationSection}>
-        <img
-          src="/images/BlurredCoins.png"
-          alt="Moedas desfocadas"
-          className={styles.coinsImage}
-        />
-        <Image
-          src="/images/DogDonationCard.png"
-          alt="Cachorro para doação"
-          width={273.34}
-          height={230.36}
-          className={styles.donationImage}
-        />
         <div className={styles.donationContent}>
           <h2 className={styles.donationTitle}>Apoie uma ONG</h2>
           <p className={styles.donationSubtitle}>
@@ -58,6 +41,15 @@ export default function AdoptionDonationSections() {
             Apoiar uma ONG
             <FaArrowRight size={20} />
           </button>
+        </div>
+        <div className={styles.imageContainer}>
+          <Image
+            src="/images/DogDonationCard.png"
+            alt="Cachorro para doação"
+            width={228}
+            height={228}
+            className={styles.donationImage}
+          />
         </div>
       </div>
     </div>

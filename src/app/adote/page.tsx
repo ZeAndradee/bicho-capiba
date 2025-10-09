@@ -1,16 +1,19 @@
 import Image from "next/image";
-import FilterCarousel from "@/components/Adote/FilterCarousel";
+import FilterCarousel from "@/components/Adote/Filters/FilterCarousel";
 import styles from "./page.module.css";
+import CloseAnimalsFeed from "@/components/Adote/CloseAnimalsFeed/CloseAnimalsFeed";
 
 export default function Adotar() {
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroBlurLeft}>
-          <img
+          <Image
             src="/icons/blurredPaws.svg"
             alt=""
             className={styles.blurredPaws}
+            width={100}
+            height={100}
           />
         </div>
         <div className={styles.heroContent}>
@@ -24,23 +27,32 @@ export default function Adotar() {
               serem felizes.
             </p>
           </div>
-          <img
+          <Image
             src="/images/AdoptionHeroDog.png"
             alt="Cachorro esperando por adoção"
             className={styles.heroImage}
+            width={400}
+            height={400}
+            priority
           />
         </div>
         <div className={styles.heroBlurRight}>
-          <img
+          <Image
             src="/icons/blurredPaws2.svg"
             alt=""
             className={styles.blurredPaws2}
+            width={100}
+            height={100}
           />
         </div>
       </section>
 
       <section className={styles.filtersSection}>
         <FilterCarousel />
+      </section>
+
+      <section className={styles.feedSection}>
+        <CloseAnimalsFeed />
       </section>
     </div>
   );

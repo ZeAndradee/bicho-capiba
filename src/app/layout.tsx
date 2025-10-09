@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Header from "@/components/header/Header";
+import Header from "@/components/Header/Header";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -84,8 +84,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <Header />
       <body>
+        <Header />
         <div style={{ minHeight: "100vh" }}>{children}</div>
       </body>
     </html>
