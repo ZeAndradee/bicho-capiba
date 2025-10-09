@@ -1,0 +1,106 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--body-font);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button:not(:disabled):hover {
+  filter: brightness(0.95);
+}
+
+.small {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.medium {
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+.large {
+  padding: 16px 32px;
+  font-size: 18px;
+}
+
+.primary {
+  color: white;
+}
+
+.secondary {
+  background: transparent;
+  border: 2px solid;
+}
+
+.outline {
+  background: transparent;
+  border: 1px solid;
+}
+
+.yellow.primary {
+  background-color: var(--yellow-capiba);
+  color: white;
+}
+
+.yellow.secondary {
+  color: var(--yellow-capiba);
+  border-color: var(--yellow-capiba);
+}
+
+.yellow.outline {
+  color: var(--yellow-capiba);
+  border-color: var(--yellow-capiba);
+}
+
+.orange.primary {
+  background-color: var(--orange-capiba);
+  color: white;
+}
+
+.orange.secondary {
+  color: var(--orange-capiba);
+  border-color: var(--orange-capiba);
+}
+
+.orange.outline {
+  color: var(--orange-capiba);
+  border-color: var(--orange-capiba);
+}
+
+.green.primary {
+  background-color: var(--green-capiba);
+  color: white;
+}
+
+.green.secondary {
+  color: var(--green-capiba);
+  border-color: var(--green-capiba);
+}
+
+.green.outline {
+  color: var(--green-capiba);
+  border-color: var(--green-capiba);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  white-space: nowrap;
+}

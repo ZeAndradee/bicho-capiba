@@ -1,0 +1,176 @@
+.sectionsContainer {
+  display: flex;
+  margin-bottom: 3rem;
+}
+
+.adoptionSection,
+.donationSection {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.adoptionSection {
+  display: flex;
+  justify-content: end;
+  background-color: var(--green-capiba);
+  border-radius: 16px 0 0 16px;
+}
+
+.donationSection {
+  display: flex;
+  justify-content: start;
+  background-color: var(--yellow-capiba);
+  border-radius: 0 16px 16px 0;
+}
+
+.adoptionImage {
+  left: 0;
+  bottom: -10px;
+  z-index: 1;
+  width: auto;
+}
+
+.pawsImageContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  overflow: visible;
+}
+
+.coinsImageContainer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  overflow: visible;
+}
+
+.imageContainer {
+  display: flex;
+  align-items: end;
+  height: 100%;
+}
+
+.pawsImage {
+  position: relative;
+}
+
+.coinsImage {
+  position: relative;
+}
+
+.donationImage {
+  right: 0;
+  bottom: -10px;
+  z-index: 1;
+  width: auto;
+}
+
+.adoptionContent {
+  padding: 2rem;
+  gap: 4rem;
+  max-width: 500px;
+}
+
+.donationContent {
+  padding: 2rem;
+  gap: 4rem;
+  max-width: 500px;
+}
+
+.adoptionTitle {
+  font-size: 2.5rem;
+  font-weight: 600;
+  font-family: var(--title-font);
+  color: #77f0a8;
+  margin-bottom: 20px;
+}
+
+.donationTitle {
+  font-size: 2.5rem;
+  font-weight: 600;
+  font-family: var(--title-font);
+  color: #c72b00;
+  margin-bottom: 20px;
+}
+
+.adoptionSubtitle {
+  font-size: 1.125rem;
+  font-family: var(--body-font);
+  color: #fff;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.donationSubtitle {
+  font-size: 1.125rem;
+  font-family: var(--body-font);
+  color: #fff;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.adoptionButton {
+  background-color: #56c984;
+  color: #003515;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.125rem;
+  font-family: var(--body-font);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.adoptionButton:hover {
+  background-color: #4bb576;
+}
+
+.donationButton {
+  background-color: var(--orange-capiba);
+  color: #fff;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.125rem;
+  font-family: var(--body-font);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.donationButton:hover {
+  background-color: #c73b15;
+}
+
+@media (max-width: 768px) {
+  .sectionsContainer {
+    flex-direction: column;
+  }
+
+  .adoptionSection,
+  .donationSection {
+    justify-content: center;
+    padding: 2rem 0;
+  }
+
+  .adoptionImage {
+    display: none;
+  }
+
+  .donationImage {
+    display: none;
+  }
+}
