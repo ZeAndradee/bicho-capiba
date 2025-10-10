@@ -29,7 +29,7 @@ const createApiInstance = () => {
 
 let apiInstance: ReturnType<typeof createApiInstance> | null = null;
 
-export const useApi = () => {
+export const getApiInstance = () => {
   if (!apiInstance) {
     apiInstance = createApiInstance();
   }
