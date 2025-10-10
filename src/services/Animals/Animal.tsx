@@ -1,4 +1,4 @@
-import { getApiInstance } from "@/hook/Api";
+import { getApiInstance } from "@/hooks/Api";
 
 export const fetchAnimals = async () => {
   try {
