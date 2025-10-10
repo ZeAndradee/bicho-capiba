@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import Header from "@/components/Header/Header";
+import Header from "@/components/UI/Header/Header";
+import Footer from "@/components/UI/Footer/Footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Bicho Capiba - Adoção de Pets e Doações para ONGs",
+  title: "Bicho Capiba - Adoção de Pets e Doações",
   description:
     "Plataforma que conecta pessoas que desejam adotar cães e gatos com ONGs de proteção animal. Encontre seu novo melhor amigo, faça doações e ajude a transformar vidas. Sistema de busca inteligente, alertas personalizados e processo de adoção seguro.",
   keywords: [
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Bicho Capiba - Adoção de Pets e Doações para ONGs",
+    title: "Bicho Capiba - Adoção de Pets e Doações",
     description:
       "Conectamos pessoas que desejam adotar com ONGs de proteção animal. Encontre cães e gatos para adoção e ajude a transformar vidas através de doações.",
     url: "https://bichocapiba.trackr.fm",
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bicho Capiba - Adoção de Pets e Doações para ONGs",
+    title: "Bicho Capiba - Adoção de Pets e Doações",
     description:
       "Conectamos pessoas que desejam adotar com ONGs de proteção animal. Encontre seu novo melhor amigo!",
     images: ["/images/BichoCapibaBlackLogo.png"],
@@ -84,9 +85,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body>
+      <body
+        style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+      >
         <Header />
-        <div style={{ minHeight: "100vh" }}>{children}</div>
+        <main style={{ flex: 1 }}>{children}</main>
+        <Footer />
       </body>
     </html>
   );

@@ -14,11 +14,11 @@ import styles from "./AnimalCard.module.css";
 
 interface AnimalCardProps {
   id: string;
-  name: string;
+  nome: string;
   image: string;
-  gender: "male" | "female";
-  age: string;
-  breed: string;
+  sexo: "M" | "F";
+  idade: number;
+  raca: string;
   distance: string;
   neighborhood: string;
   city: string;
@@ -28,11 +28,11 @@ interface AnimalCardProps {
 
 export default function AnimalCard({
   id,
-  name,
+  nome,
   image,
-  gender,
-  age,
-  breed,
+  sexo,
+  idade,
+  raca,
   distance,
   neighborhood,
   city,
@@ -58,7 +58,7 @@ export default function AnimalCard({
           onMouseEnter={() => setIsImageHovered(true)}
           onMouseLeave={() => setIsImageHovered(false)}
         >
-          <Image src={image} alt={name} className={styles.image} width={300} height={300} />
+          <Image src={image} alt={nome} className={styles.image} width={300} height={300} />
         </Link>
         <button
           className={`${styles.favoriteButton} ${
@@ -80,40 +80,40 @@ export default function AnimalCard({
       <div className={styles.content}>
         <div className={styles.nameRow}>
           <Link href={`/adote/${id}`} className={styles.nameLink}>
-            <h3 className={styles.name}>{name}</h3>
+            <h3 className={styles.name}>{nome}</h3>
           </Link>
           <Link
-            href={`/adote/animais?gender=${gender}`}
+            href={`/adote/animais?gender=${sexo}`}
             className={styles.genderLink}
           >
             <div
               className={styles.genderIcon}
-              title={gender === "male" ? "Macho" : "Fêmea"}
+              title={sexo === "M" ? "Macho" : "Fêmea"}
             >
-              {gender === "male" ? <FaMars /> : <FaVenus />}
+              {sexo === "M" ? <FaMars /> : <FaVenus />}
             </div>
           </Link>
         </div>
 
         <div className={styles.infoRow}>
           <Link
-            href={`/adote/animais?age=${age.replace(" ", "")}`}
+            href={`/adote/animais?age=${idade}`}
             className={styles.ageLink}
           >
             <div className={styles.infoItem}>
               <FaClock className={styles.icon} />
-              <span className={styles.text}>{age}</span>
+              <span className={styles.text}>{idade} anos</span>
             </div>
           </Link>
           <Link
-            href={`/adote/animais?breed=${breed
+            href={`/adote/animais?breed=${raca
               .toLowerCase()
               .replace(" ", "-")}`}
             className={styles.speciesLink}
           >
             <div className={styles.infoItem}>
               <FaPaw className={styles.icon} />
-              <span className={styles.text}>{breed}</span>
+              <span className={styles.text}>{raca}</span>
             </div>
           </Link>
         </div>

@@ -21,10 +21,10 @@ import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import styles from "./CloseAnimalsFeed.module.css";
 
 interface Filters {
-  age: string;
-  gender: string;
+  idade: string;
+  sexo: string;
   distance: string;
-  species: string;
+  especie: string;
 }
 
 const ageOptions: FilterOption[] = [
@@ -36,8 +36,8 @@ const ageOptions: FilterOption[] = [
 ];
 
 const genderOptions: FilterOption[] = [
-  { value: "male", label: "Macho", icon: <FaMars /> },
-  { value: "female", label: "Fêmea", icon: <FaVenus /> },
+  { value: "M", label: "Macho", icon: <FaMars /> },
+  { value: "F", label: "Fêmea", icon: <FaVenus /> },
 ];
 
 const distanceOptions: FilterOption[] = [
@@ -58,10 +58,10 @@ const speciesOptions: FilterOption[] = [
 const CloseAnimalsFeed = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [filters, setFilters] = useState<Filters>({
-    age: "",
-    gender: "",
+    idade: "",
+    sexo: "",
     distance: "",
-    species: "",
+    especie: "",
   });
 
   const handleFavoriteClick = (animalId: string) => {
@@ -81,10 +81,10 @@ const CloseAnimalsFeed = () => {
 
   const resetFilters = () => {
     setFilters({
-      age: "",
-      gender: "",
+      idade: "",
+      sexo: "",
       distance: "",
-      species: "",
+      especie: "",
     });
   };
 
@@ -93,11 +93,11 @@ const CloseAnimalsFeed = () => {
   );
 
   const filteredAnimals = mockAnimals.filter((animal) => {
-    if (filters.age && !animal.age.includes(filters.age)) return false;
-    if (filters.gender && animal.gender !== filters.gender) return false;
+    if (filters.idade && animal.idade.toString() !== filters.idade.replace(" anos", "")) return false;
+    if (filters.sexo && animal.sexo !== filters.sexo) return false;
     if (filters.distance && !animal.distance.includes(filters.distance))
       return false;
-    if (filters.species && animal.species !== filters.species) return false;
+    if (filters.especie && animal.especie !== filters.especie) return false;
     return true;
   });
 
@@ -108,15 +108,15 @@ const CloseAnimalsFeed = () => {
 
         <div className={styles.filters}>
           <Filter
-            value={filters.age}
-            onChange={(value) => handleFilterChange("age", value)}
+            value={filters.idade}
+            onChange={(value) => handleFilterChange("idade", value)}
             options={ageOptions}
             placeholder="Todas as idades"
           />
 
           <Filter
-            value={filters.gender}
-            onChange={(value) => handleFilterChange("gender", value)}
+            value={filters.sexo}
+            onChange={(value) => handleFilterChange("sexo", value)}
             options={genderOptions}
             placeholder="Todos os gêneros"
           />
@@ -129,8 +129,8 @@ const CloseAnimalsFeed = () => {
           />
 
           <Filter
-            value={filters.species}
-            onChange={(value) => handleFilterChange("species", value)}
+            value={filters.especie}
+            onChange={(value) => handleFilterChange("especie", value)}
             options={speciesOptions}
             placeholder="Todas as espécies"
           />
@@ -169,11 +169,11 @@ const CloseAnimalsFeed = () => {
             <AnimalCard
               key={animal.id}
               id={animal.id}
-              name={animal.name}
+              nome={animal.nome}
               image={animal.image}
-              gender={animal.gender}
-              age={animal.age}
-              breed={animal.breed}
+              sexo={animal.sexo}
+              idade={animal.idade}
+              raca={animal.raca}
               distance={animal.distance}
               neighborhood={animal.neighborhood}
               city={animal.city}
