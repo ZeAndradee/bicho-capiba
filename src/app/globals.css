@@ -34,6 +34,9 @@
   --title-font: "Fredoka", "Inter", Arial, Helvetica, sans-serif;
   --body-font: "Inter", Arial, Helvetica, sans-serif;
   --page-max-width: 1280px;
+  --skeleton-base: #e0e0e0;
+  --skeleton-shimmer: #f0f0f0;
+  --background-secondary: #f8f8f8;
 }
 
 html,

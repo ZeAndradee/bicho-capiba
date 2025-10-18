@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/UI/Header/Header";
 import Footer from "@/components/UI/Footer/Footer";
+import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -88,9 +89,11 @@ export default function RootLayout({
       <body
         style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
       >
-        <Header />
-        <main style={{ flex: 1 }}>{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <main style={{ flex: 1 }}>{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,0 +1,287 @@
+.animalInfo {
+  padding: 2rem 0;
+  background: var(--background);
+}
+
+.container {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 6rem;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rightColumn {
+  display: flex;
+  max-width: 400px;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.2;
+}
+
+.stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--text-color);
+}
+
+.statIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--orange-capiba);
+}
+
+.historyTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-top: 1rem;
+}
+
+.historySection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.historyText {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.paragraph {
+  margin-bottom: 1rem;
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.showMoreButton {
+  background: none;
+  border: none;
+  color: var(--orange-capiba);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  transition: color 0.3s ease;
+  text-decoration: underline;
+}
+
+.showMoreButton:hover {
+  color: #c23813;
+}
+
+.adoptButton {
+  background: var(--orange-capiba);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: var(--title-font);
+}
+
+.adoptButton:hover {
+  background: #c23813;
+}
+
+.adoptButtonMobile {
+  display: none;
+}
+
+.adoptButtonDesktop {
+  display: block;
+}
+
+.mapContainer {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.map {
+  border-radius: 0.5rem;
+}
+
+.ongInfo {
+  padding-top: 1rem;
+  border-top: 1px solid #d6c8c8;
+}
+
+.ongHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ongImageContainer {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ongImage {
+  object-fit: cover;
+}
+
+.ongDetails {
+  flex: 1;
+}
+
+.ongName {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.25rem;
+}
+
+.ongAddress {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+.phoneButton {
+  background: var(--green-capiba);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.phoneButton:hover {
+  background: #2f6147;
+}
+
+.phoneIcon {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+
+  .adoptButtonDesktop {
+    display: none;
+  }
+
+  .adoptButtonMobile {
+    display: block;
+    padding: 1.25rem 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .stats {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .statItem {
+    font-size: 0.95rem;
+    align-items: flex-start;
+  }
+
+  .statIcon {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+  }
+
+  .ongImageContainer {
+    width: 45px;
+    height: 45px;
+  }
+
+  .ongName {
+    font-size: 1.1rem;
+  }
+
+  .ongAddress {
+    font-size: 0.85rem;
+  }
+
+  .phoneButton {
+    width: 35px;
+    height: 35px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    gap: 0.5rem;
+  }
+
+  .statItem {
+    font-size: 0.9rem;
+  }
+
+  .statIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ongImageContainer {
+    width: 40px;
+    height: 40px;
+  }
+
+  .ongName {
+    font-size: 1rem;
+  }
+
+  .ongAddress {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+
+  .phoneButton {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+  }
+}

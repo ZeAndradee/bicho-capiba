@@ -1,0 +1,213 @@
+.hero {
+  position: relative;
+  width: 100%;
+  margin: 2rem 0;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.leftSideImages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: -5%;
+  z-index: 1;
+}
+
+.mainImageContainer {
+  position: relative;
+  width: min(480px, 60vw);
+  aspect-ratio: 4/2.5;
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.rightSideImages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: -5%;
+  z-index: 1;
+}
+
+.sideImageContainer {
+  position: relative;
+  width: min(290px, 40vw);
+  aspect-ratio: 4/3;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  filter: blur(3px) brightness(0.8);
+  opacity: 0.8;
+}
+
+.sideImageContainer:hover {
+  filter: blur(1px) brightness(0.9);
+  opacity: 1;
+}
+
+.mainImage {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.sideImage {
+  object-fit: cover;
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 3;
+  color: var(--text-color);
+  font-size: 1.2rem;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.prevButton {
+  left: 1rem;
+}
+
+.nextButton {
+  right: 1rem;
+}
+
+.dotsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot:hover {
+  background: var(--text-color);
+  opacity: 0.7;
+}
+
+.activeDot {
+  width: 24px;
+  border-radius: 12px;
+  background: var(--yellow-capiba);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    margin: 1rem 0;
+    border-radius: 12px;
+  }
+
+  .mainImageContainer {
+    width: min(300px, 80vw);
+    aspect-ratio: 4/3;
+  }
+
+  .leftSideImages {
+    margin-right: -40px;
+  }
+
+  .rightSideImages {
+    margin-left: -40px;
+  }
+
+  .sideImageContainer {
+    width: min(120px, 25vw);
+    aspect-ratio: 4/3;
+    filter: blur(2px) brightness(0.7);
+  }
+
+  .navButton {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .prevButton {
+    left: 0.5rem;
+  }
+
+  .nextButton {
+    right: 0.5rem;
+  }
+
+  .dotsContainer {
+    gap: 6px;
+    margin-top: 0.75rem;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .activeDot {
+    width: 18px;
+    border-radius: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainImageContainer {
+    width: min(250px, 90vw);
+    aspect-ratio: 4/3;
+  }
+
+  .leftSideImages,
+  .rightSideImages {
+    display: none;
+  }
+
+  .navButton {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+
+  .dotsContainer {
+    gap: 4px;
+    margin-top: 0.5rem;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .activeDot {
+    width: 15px;
+    border-radius: 7.5px;
+  }
+}

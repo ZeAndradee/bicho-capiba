@@ -1,0 +1,351 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero {
+  position: relative;
+  width: 100%;
+  margin: 2rem 0 4rem 0;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.leftSideImages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: -5%;
+  z-index: 1;
+}
+
+.mainImageSkeleton {
+  position: relative;
+  width: min(480px, 60vw);
+  aspect-ratio: 4/2.5;
+  border-radius: 16px;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  z-index: 2;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+.rightSideImages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: -5%;
+  z-index: 1;
+}
+
+.sideImageSkeleton {
+  position: relative;
+  width: min(290px, 40vw);
+  aspect-ratio: 4/3;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  opacity: 0.6;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+.dotsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.dotSkeleton {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+}
+
+.animalInfo {
+  margin: 2rem 0;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 6rem;
+  align-items: start;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.titleSkeleton {
+  height: 3rem;
+  width: 60%;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 8px;
+}
+
+.stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.statSkeleton {
+  height: 1.5rem;
+  width: 20%;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 6px;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+.adoptButtonSkeleton {
+  height: 3.5rem;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 8px;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+.adoptButtonMobile {
+  display: none;
+}
+
+.adoptButtonDesktop {
+  display: block;
+}
+
+.historyTitleSkeleton {
+  height: 2rem;
+  width: 30%;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 6px;
+}
+
+.historySection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.textLineSkeleton {
+  height: 1.2rem;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 4px;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mapSkeleton {
+  height: 250px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 12px;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+.ongInfoSkeleton {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 12px;
+}
+
+.ongImageSkeleton {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+.ongDetailsSkeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ongNameSkeleton {
+  height: 1.2rem;
+  width: 70%;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 4px;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+.ongAddressSkeleton {
+  height: 1rem;
+  width: 90%;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    transparent 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 4px;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .page {
+    padding: 0 1rem;
+  }
+
+  .adoptButtonDesktop {
+    display: none;
+  }
+
+  .adoptButtonMobile {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    margin: 1rem 0;
+    border-radius: 12px;
+  }
+
+  .mainImageSkeleton {
+    width: min(300px, 80vw);
+    aspect-ratio: 4/3;
+  }
+
+  .leftSideImages {
+    margin-right: -40px;
+  }
+
+  .rightSideImages {
+    margin-left: -40px;
+  }
+
+  .sideImageSkeleton {
+    width: min(120px, 25vw);
+    aspect-ratio: 4/3;
+  }
+
+  .dotsContainer {
+    gap: 6px;
+    margin-top: 0.75rem;
+  }
+
+  .dotSkeleton {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainImageSkeleton {
+    width: min(250px, 90vw);
+    aspect-ratio: 4/3;
+  }
+
+  .leftSideImages,
+  .rightSideImages {
+    display: none;
+  }
+
+  .dotsContainer {
+    gap: 4px;
+    margin-top: 0.5rem;
+  }
+
+  .dotSkeleton {
+    width: 5px;
+    height: 5px;
+  }
+}

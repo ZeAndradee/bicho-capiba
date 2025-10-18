@@ -9,7 +9,8 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 import Link from "next/link";
-import Image from "next/image";
+import ImageWithFallback from "../Images/ImageWithFallback";
+import { likeAnimal, unlikeAnimal } from "@/services/Animals/Animal";
 import styles from "./AnimalCard.module.css";
 
 interface AnimalCardProps {
@@ -19,9 +20,9 @@ interface AnimalCardProps {
   sexo: "M" | "F";
   idade: number;
   raca: string;
-  distance: string;
-  neighborhood: string;
-  city: string;
+  distancia: string;
+  bairroOng: string;
+  cidadeOng: string;
   isFavorite?: boolean;
   onFavoriteClick?: (id: string) => void;
 }
@@ -33,16 +34,25 @@ export default function AnimalCard({
   sexo,
   idade,
   raca,
-  distance,
-  neighborhood,
-  city,
+  distancia,
+  bairroOng,
+  cidadeOng,
   isFavorite = false,
   onFavoriteClick,
 }: AnimalCardProps) {
   const [isImageHovered, setIsImageHovered] = useState(false);
 
-  const handleFavoriteClick = () => {
-    onFavoriteClick?.(id);
+  const handleFavoriteClick = async () => {
+    try {
+      if (isFavorite) {
+        await unlikeAnimal(id);
+      } else {
+        await likeAnimal(id);
+      }
+      onFavoriteClick?.(id);
+    } catch (error) {
+      console.error("Failed to toggle like:", error);
+    }
   };
 
   return (
@@ -58,7 +68,13 @@ export default function AnimalCard({
           onMouseEnter={() => setIsImageHovered(true)}
           onMouseLeave={() => setIsImageHovered(false)}
         >
-          <Image src={image} alt={nome} className={styles.image} width={300} height={300} />
+          <ImageWithFallback
+            src={image}
+            alt={nome}
+            className={styles.image}
+            fill
+            sizes="(max-height: 200px)"
+          />
         </Link>
         <button
           className={`${styles.favoriteButton} ${
@@ -96,10 +112,7 @@ export default function AnimalCard({
         </div>
 
         <div className={styles.infoRow}>
-          <Link
-            href={`/adote/animais?age=${idade}`}
-            className={styles.ageLink}
-          >
+          <Link href={`/adote/animais?age=${idade}`} className={styles.ageLink}>
             <div className={styles.infoItem}>
               <FaClock className={styles.icon} />
               <span className={styles.text}>{idade} anos</span>
@@ -122,7 +135,7 @@ export default function AnimalCard({
           <div className={styles.infoItem}>
             <FaMapMarkerAlt className={styles.icon} />
             <span className={styles.text}>
-              {distance} • {neighborhood}, {city}
+              {distancia} • {bairroOng}, {cidadeOng}
             </span>
           </div>
         </div>

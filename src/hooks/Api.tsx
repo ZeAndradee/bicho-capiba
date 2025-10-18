@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const baseUrl = process.env.NEXT_API_URL || "http://localhost:3333";
-const withCredentials = process.env.NEXT_PUBLIC_WITH_CREDENTIALS !== "false";
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
+const withCredentials = true;
 
 const createApiInstance = () => {
   const instance = axios.create({
-    baseURL: `${baseUrl}/`,
-    timeout: 30000,
+    baseURL: `${baseUrl}api`,
+    timeout: 40000,
     withCredentials,
   });
 
@@ -15,7 +15,7 @@ const createApiInstance = () => {
     async (error) => {
       if (error.response?.status === 401) {
         try {
-          await instance.post("/user/auth/logout");
+          await instance.post("/auth/logout");
         } catch (logoutError) {
           return Promise.reject(logoutError);
         }
