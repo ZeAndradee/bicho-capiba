@@ -44,23 +44,27 @@ export default function AnimalHero({ animal }: AnimalHeroProps) {
   const rightImageIndex =
     currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
 
+  const hasMultipleImages = images.length > 1;
+
   return (
     <section className={styles.hero}>
       <div className={styles.carousel}>
-        <div className={styles.leftSideImages}>
-          <div
-            className={styles.sideImageContainer}
-            onClick={() => setCurrentImageIndex(leftImageIndex)}
-          >
-            <ImageWithFallback
-              src={images[leftImageIndex]}
-              alt={`${nome} - Imagem ${leftImageIndex + 1}`}
-              fill
-              className={styles.sideImage}
-              sizes="150px"
-            />
+        {hasMultipleImages && (
+          <div className={styles.leftSideImages}>
+            <div
+              className={styles.sideImageContainer}
+              onClick={() => setCurrentImageIndex(leftImageIndex)}
+            >
+              <ImageWithFallback
+                src={images[leftImageIndex]}
+                alt={`${nome} - Imagem ${leftImageIndex + 1}`}
+                fill
+                className={styles.sideImage}
+                sizes="150px"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className={styles.mainImageContainer}>
           <ImageWithFallback
@@ -73,49 +77,57 @@ export default function AnimalHero({ animal }: AnimalHeroProps) {
           />
         </div>
 
-        <div className={styles.rightSideImages}>
-          <div
-            className={styles.sideImageContainer}
-            onClick={() => setCurrentImageIndex(rightImageIndex)}
-          >
-            <ImageWithFallback
-              src={images[rightImageIndex]}
-              alt={`${nome} - Imagem ${rightImageIndex + 1}`}
-              fill
-              className={styles.sideImage}
-              sizes="150px"
-            />
+        {hasMultipleImages && (
+          <div className={styles.rightSideImages}>
+            <div
+              className={styles.sideImageContainer}
+              onClick={() => setCurrentImageIndex(rightImageIndex)}
+            >
+              <ImageWithFallback
+                src={images[rightImageIndex]}
+                alt={`${nome} - Imagem ${rightImageIndex + 1}`}
+                fill
+                className={styles.sideImage}
+                sizes="150px"
+              />
+            </div>
           </div>
+        )}
+
+        {hasMultipleImages && (
+          <>
+            <button
+              className={`${styles.navButton} ${styles.prevButton}`}
+              onClick={prevImage}
+              aria-label="Imagem anterior"
+            >
+              <FaChevronLeft />
+            </button>
+
+            <button
+              className={`${styles.navButton} ${styles.nextButton}`}
+              onClick={nextImage}
+              aria-label="Próxima imagem"
+            >
+              <FaChevronRight />
+            </button>
+          </>
+        )}
+      </div>
+      {hasMultipleImages && (
+        <div className={styles.dotsContainer}>
+          {images.map((_, index) => (
+            <button
+              key={index}
+              className={`${styles.dot} ${
+                index === currentImageIndex ? styles.activeDot : ""
+              }`}
+              onClick={() => setCurrentImageIndex(index)}
+              aria-label={`Ir para imagem ${index + 1}`}
+            />
+          ))}
         </div>
-
-        <button
-          className={`${styles.navButton} ${styles.prevButton}`}
-          onClick={prevImage}
-          aria-label="Imagem anterior"
-        >
-          <FaChevronLeft />
-        </button>
-
-        <button
-          className={`${styles.navButton} ${styles.nextButton}`}
-          onClick={nextImage}
-          aria-label="Próxima imagem"
-        >
-          <FaChevronRight />
-        </button>
-      </div>
-      <div className={styles.dotsContainer}>
-        {images.map((_, index) => (
-          <button
-            key={index}
-            className={`${styles.dot} ${
-              index === currentImageIndex ? styles.activeDot : ""
-            }`}
-            onClick={() => setCurrentImageIndex(index)}
-            aria-label={`Ir para imagem ${index + 1}`}
-          />
-        ))}
-      </div>
+      )}
     </section>
   );
 }

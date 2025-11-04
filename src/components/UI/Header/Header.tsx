@@ -3,8 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import UserImage from "../UserImage/UserImage";
+import {
+  User,
+  Settings,
+  Heart,
+  LogOut,
+  Building2,
+  BarChart3,
+} from "lucide-react";
 import styles from "./Header.module.css";
 
 const navigationItems = [
@@ -15,16 +24,24 @@ const navigationItems = [
 ];
 
 const rightNavigationItems = [
-  { label: "Para ONGs", href: "/para-ongs" },
+  { label: "Para ONGs", href: "/ong/sobre" },
   { label: "Entrar", href: "/entrar" },
 ];
 
 export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout, isLoading } = useAuth();
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isMobileUserDropdownOpen, setIsMobileUserDropdownOpen] =
+    useState(false);
+  const { user, logout, isLoading, isOng } = useAuth();
+  const userDropdownRef = useRef<HTMLDivElement>(null);
 
-  const isAuthPage = pathname === "/entrar" || pathname === "/cadastro" || pathname === "/cadastro-ong" || pathname === "/cadastro-sucesso";
+  const isAuthPage =
+    pathname === "/entrar" ||
+    pathname === "/cadastro" ||
+    pathname === "/cadastro-ong" ||
+    pathname === "/cadastro-sucesso";
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -33,24 +50,63 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await logout();
+      setIsUserDropdownOpen(false);
+      setIsMobileUserDropdownOpen(false);
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
 
+  const toggleUserDropdown = () => {
+    setIsUserDropdownOpen(!isUserDropdownOpen);
+  };
+
+  const toggleMobileUserDropdown = () => {
+    setIsMobileUserDropdownOpen(!isMobileUserDropdownOpen);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const displayName =
+    isOng && user && "nome" in user
+      ? user.nome
+      : user && "fullName" in user
+      ? user.fullName
+      : "";
+  const userType = isOng ? "ONG" : "Tutor";
+
   const getRightNavItems = () => {
     if (isAuthPage) {
       return [
-        { label: "Para ONGs", href: "/para-ongs" },
+        { label: "Para ONGs", href: "/ong/sobre" },
         { label: "Início", href: "/" },
       ];
     }
 
     if (user) {
-      return [
-        { label: "Para ONGs", href: "/para-ongs" },
-        { label: `Olá, ${user.fullName}`, href: "/perfil" },
-      ];
+      const items = [];
+
+      if (isOng) {
+        items.push({ label: "Dashboard", href: "/ong/dashboard" });
+      } else {
+        items.push({ label: "Para ONGs", href: "/ong/sobre" });
+      }
+
+      return items;
     }
 
     return rightNavigationItems;
@@ -82,7 +138,6 @@ export default function Header() {
               }`}
             >
               {item.label}
-              {pathname === item.href && <span className={styles.dot}></span>}
             </Link>
           ))}
         </nav>
@@ -98,17 +153,66 @@ export default function Header() {
             }`}
           >
             {item.label}
-            {pathname === item.href && <span className={styles.dot}></span>}
           </Link>
         ))}
         {user && (
-          <button
-            onClick={handleLogout}
-            className={styles.logoutButton}
-            disabled={isLoading}
-          >
-            Sair
-          </button>
+          <div className={styles.userDropdown} ref={userDropdownRef}>
+            <UserImage
+              src=""
+              alt={displayName}
+              size="md"
+              fallbackText={displayName}
+              onClick={toggleUserDropdown}
+              className={styles.userImageButton}
+            />
+            {isUserDropdownOpen && (
+              <div className={styles.dropdownMenu}>
+                <div className={styles.dropdownHeader}>
+                  <span className={styles.userName}>{displayName}</span>
+                  <span className={styles.userEmail}>{user.email}</span>
+                  <span className={styles.userType}>{userType}</span>
+                </div>
+                <div className={styles.dropdownDivider}></div>
+                {isOng && (
+                  <Link
+                    href="/ong/dashboard"
+                    className={styles.dropdownItem}
+                    onClick={() => setIsUserDropdownOpen(false)}
+                  >
+                    <BarChart3 size={16} />
+                    <span>Dashboard</span>
+                  </Link>
+                )}
+                {!isOng && (
+                  <Link
+                    href="/favoritos"
+                    className={styles.dropdownItem}
+                    onClick={() => setIsUserDropdownOpen(false)}
+                  >
+                    <Heart size={16} />
+                    <span>Favoritos</span>
+                  </Link>
+                )}
+                <Link
+                  href={isOng ? "/ong/configuracoes" : "/configuracoes"}
+                  className={styles.dropdownItem}
+                  onClick={() => setIsUserDropdownOpen(false)}
+                >
+                  <Settings size={16} />
+                  <span>Configurações</span>
+                </Link>
+                <div className={styles.dropdownDivider}></div>
+                <button
+                  onClick={handleLogout}
+                  className={styles.dropdownLogout}
+                  disabled={isLoading}
+                >
+                  <LogOut size={16} />
+                  <span>Sair</span>
+                </button>
+              </div>
+            )}
+          </div>
         )}
       </nav>
 
@@ -134,6 +238,79 @@ export default function Header() {
         }`}
       >
         <nav className={styles.mobileNav}>
+          {user && (
+            <div className={styles.mobileUserSection}>
+              <div
+                className={styles.mobileUserInfo}
+                onClick={toggleMobileUserDropdown}
+              >
+                <UserImage
+                  src=""
+                  alt={displayName}
+                  size="lg"
+                  fallbackText={displayName}
+                  className={styles.mobileUserImage}
+                />
+                <div className={styles.mobileUserDetails}>
+                  <span className={styles.mobileUserName}>{displayName}</span>
+                  <span className={styles.mobileUserEmail}>{user.email}</span>
+                  <span className={styles.mobileUserType}>{userType}</span>
+                </div>
+              </div>
+              {isMobileUserDropdownOpen && (
+                <div className={styles.mobileUserDropdown}>
+                  {isOng && (
+                    <Link
+                      href="/ong/dashboard"
+                      className={`${styles.mobileNavLink} ${styles.mobileUserLink}`}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setIsMobileUserDropdownOpen(false);
+                      }}
+                    >
+                      <BarChart3 size={16} />
+                      <span>Dashboard</span>
+                    </Link>
+                  )}
+                  {!isOng && (
+                    <Link
+                      href="/favoritos"
+                      className={`${styles.mobileNavLink} ${styles.mobileUserLink}`}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setIsMobileUserDropdownOpen(false);
+                      }}
+                    >
+                      <Heart size={16} />
+                      <span>Favoritos</span>
+                    </Link>
+                  )}
+                  <Link
+                    href="/configuracoes"
+                    className={`${styles.mobileNavLink} ${styles.mobileUserLink}`}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setIsMobileUserDropdownOpen(false);
+                    }}
+                  >
+                    <Settings size={16} />
+                    <span>Configurações</span>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className={`${styles.mobileNavLink} ${styles.mobileLogout}`}
+                    disabled={isLoading}
+                  >
+                    <LogOut size={16} />
+                    <span>Sair</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           {!isAuthPage &&
             navigationItems.map((item) => (
               <Link
@@ -160,18 +337,6 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
-            {user && (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsMenuOpen(false);
-                }}
-                className={`${styles.mobileNavLink} ${styles.logoutButton}`}
-                disabled={isLoading}
-              >
-                Sair
-              </button>
-            )}
           </div>
         </nav>
       </div>

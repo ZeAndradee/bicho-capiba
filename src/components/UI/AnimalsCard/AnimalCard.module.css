@@ -6,6 +6,9 @@
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
 }
 
 .imageContainer {
@@ -111,6 +114,10 @@
   color: var(--foreground);
   font-size: 1.2rem;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
 }
 
 .genderIcon {
@@ -122,6 +129,7 @@
 
 .infoRow {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 12px;
 }
@@ -147,4 +155,7 @@
   color: var(--text-color);
   font-size: 1rem;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

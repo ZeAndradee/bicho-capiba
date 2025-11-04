@@ -23,7 +23,7 @@ export const handleApiError = (
     400: "Dados inválidos. Verifique as informações e tente novamente.",
     401: "Acesso negado. Faça login novamente.",
     403: "Você não tem permissão para realizar esta ação.",
-    404: "Informação não encontrada.",
+    404: "Ocorreu um erro inesperado. Tente novamente em alguns minutos.",
     409: "Conflito nos dados. Verifique se as informações já existem.",
     422: "Dados inválidos. Verifique os campos e tente novamente.",
     429: "Muitas tentativas. Aguarde um momento e tente novamente.",

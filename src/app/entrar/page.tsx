@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Button from "@/components/UI/Button/Button";
+import Error from "@/components/UI/Error/Error";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "@/contexts/AuthContext";
 import { handleApiError, ErrorState } from "@/utils/ErrorHandler";
+import { formatUrlParam } from "@/utils/formatters";
 import styles from "./page.module.css";
 
-export default function LoginPage() {
+function LoginForm() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -18,6 +20,8 @@ export default function LoginPage() {
   const [error, setError] = useState<ErrorState | null>(null);
   const { login, logout, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -32,7 +36,13 @@ export default function LoginPage() {
 
     try {
       await login(formData);
-      router.push("/");
+      if (redirectTo) {
+        const url = new URL(redirectTo, window.location.origin);
+        url.searchParams.set('redirected', 'true');
+        router.push(url.pathname + url.search);
+      } else {
+        router.push("/");
+      }
     } catch (err: unknown) {
       const customErrorMessages = {
         401: "E-mail ou senha estão incorretos.",
@@ -51,7 +61,7 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          {error && <div className={styles.error}>{error.message}</div>}
+          <Error error={error} />
 
           <div className={styles.inputGroup}>
             <label htmlFor="email">E-mail</label>
@@ -106,12 +116,20 @@ export default function LoginPage() {
         <div className={styles.footer}>
           <p>
             Ainda não tem uma conta?{" "}
-            <Link href="/cadastro" className={styles.signupLink}>
+            <Link href={`/cadastro${redirectTo ? `?redirect=${formatUrlParam(redirectTo)}` : ""}`} className={styles.signupLink}>
               Cadastre-se aqui
             </Link>
           </p>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

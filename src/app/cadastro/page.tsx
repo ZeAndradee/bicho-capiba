@@ -1,22 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Button from "@/components/UI/Button/Button";
+import Error from "@/components/UI/Error/Error";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {
   validateUserSignupForm,
   UserSignupFormData,
 } from "@/validators/auth/userSignup";
 import { useAuth } from "@/contexts/AuthContext";
-import { getApiInstance } from "@/hooks/Api";
 import { handleApiError, ErrorState } from "@/utils/ErrorHandler";
+import { formatUrlParam } from "@/utils/formatters";
 import styles from "./page.module.css";
 
-export default function SignupPage() {
-  const { setUser, logout, isAuthenticated } = useAuth();
+function SignupForm() {
+  const { signup, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
   const [formData, setFormData] = useState<UserSignupFormData>({
     firstName: "",
     lastName: "",
@@ -27,7 +30,6 @@ export default function SignupPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState<ErrorState | null>(null);
 
@@ -61,11 +63,9 @@ export default function SignupPage() {
       return;
     }
 
-    setIsLoading(true);
     setApiError(null);
 
     try {
-      const api = getApiInstance();
       const submitData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -73,18 +73,15 @@ export default function SignupPage() {
         password: formData.password,
       };
 
-      const response = await api.post("/users", submitData);
+      await signup(submitData);
 
-      if (response.data.status === "OK" && response.data.result) {
-        const userData = {
-          id: response.data.result.uuid,
-          fullName: `${response.data.result.firstName} ${response.data.result.lastName}`,
-          email: response.data.result.email,
-        };
-
-        setUser(userData);
+      if (redirectTo) {
+        const url = new URL(redirectTo, window.location.origin);
+        url.searchParams.set('redirected', 'true');
+        router.push(url.pathname + url.search);
+      } else {
         router.push(
-          `/cadastro-sucesso?nome=${encodeURIComponent(formData.firstName)}`
+          `/cadastro-sucesso?nome=${formatUrlParam(formData.firstName)}`
         );
       }
     } catch (error) {
@@ -93,8 +90,6 @@ export default function SignupPage() {
         422: "Dados inválidos. Verifique os campos e tente novamente.",
       });
       setApiError(errorState);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -110,7 +105,7 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          {apiError && <div className={styles.error}>{apiError.message}</div>}
+          <Error error={apiError} />
           <div className={styles.nameRow}>
             <div className={styles.inputGroup}>
               <label htmlFor="firstName">Nome *</label>
@@ -250,12 +245,20 @@ export default function SignupPage() {
         <div className={styles.footer}>
           <p>
             Já tem uma conta?{" "}
-            <Link href="/entrar" className={styles.loginLink}>
+            <Link href={`/entrar${redirectTo ? `?redirect=${formatUrlParam(redirectTo)}` : ""}`} className={styles.loginLink}>
               Entre aqui
             </Link>
           </p>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignupForm />
+    </Suspense>
   );
 }

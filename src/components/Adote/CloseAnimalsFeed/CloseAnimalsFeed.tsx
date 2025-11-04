@@ -67,16 +67,18 @@ const speciesOptions: FilterOption[] = [
 ];
 
 const CloseAnimalsFeed = () => {
-  const [animals, setAnimals] = useState<Array<{
-    uuid: string;
-    nome: string;
-    sexo: "M" | "F";
-    idade: number;
-    raca: string;
-    especie: string;
-    fotos?: Array<{ url: string }>;
-    ong?: { bairro?: string; cidade?: string };
-  }>>([]);
+  const [animals, setAnimals] = useState<
+    Array<{
+      uuid: string;
+      nome: string;
+      sexo: "M" | "F";
+      idade: number;
+      raca: string;
+      especie: string;
+      fotos?: Array<{ url: string }>;
+      ong?: { bairro?: string; cidade?: string };
+    }>
+  >([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -98,10 +100,7 @@ const CloseAnimalsFeed = () => {
           setLoadingMore(true);
         }
 
-        const { animals: newAnimals } = await fetchAnimals(
-          page,
-          10
-        );
+        const { animals: newAnimals } = await fetchAnimals(page, 10);
 
         setAnimals((prev) => {
           if (reset) {
@@ -303,7 +302,7 @@ const CloseAnimalsFeed = () => {
               image={animal.fotos?.[0]?.url || ""}
               sexo={animal.sexo}
               idade={animal.idade}
-              raca={animal.raca}
+              raca={{ id: 0, nome: animal.raca, especieId: 0 }}
               distancia="Próximo"
               bairroOng={animal.ong?.bairro || "Não informado"}
               cidadeOng={animal.ong?.cidade || "Não informado"}

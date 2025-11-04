@@ -1,0 +1,134 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--background);
+  border-radius: 16px;
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.title {
+  font-family: var(--title-font);
+  font-size: 1.5rem;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: var(--background-secondary);
+  color: var(--orange-capiba);
+}
+
+.cropContainer {
+  flex: 1;
+  overflow: auto;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-secondary);
+}
+
+.reactCrop {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.image {
+  max-width: 100%;
+  max-height: 60vh;
+  display: block;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 95vw;
+    max-height: 85vh;
+  }
+
+  .header {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .cropContainer {
+    padding: 1rem;
+  }
+
+  .image {
+    max-height: 50vh;
+  }
+
+  .actions {
+    padding: 1rem;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.1rem;
+  }
+
+  .closeButton {
+    font-size: 1.25rem;
+  }
+
+  .cropContainer {
+    padding: 0.5rem;
+  }
+
+  .image {
+    max-height: 40vh;
+  }
+}
