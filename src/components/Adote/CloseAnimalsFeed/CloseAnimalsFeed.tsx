@@ -72,8 +72,8 @@ const CloseAnimalsFeed = () => {
       uuid: string;
       nome: string;
       sexo: "M" | "F";
-      idade: number;
-      raca: string;
+      idade: string;
+      raca: { nome: string };
       especie: string;
       fotos?: Array<{ url: string }>;
       ong?: { bairro?: string; cidade?: string };
@@ -175,7 +175,7 @@ const CloseAnimalsFeed = () => {
   const filteredAnimals = animals.filter((animal) => {
     if (
       filters.idade &&
-      animal.idade.toString() !== filters.idade.replace(" anos", "")
+      animal.idade !== filters.idade.replace(" anos", "")
     )
       return false;
     if (filters.sexo && animal.sexo !== filters.sexo) return false;
@@ -301,8 +301,8 @@ const CloseAnimalsFeed = () => {
               nome={animal.nome}
               image={animal.fotos?.[0]?.url || ""}
               sexo={animal.sexo}
-              idade={animal.idade}
-              raca={{ id: 0, nome: animal.raca, especieId: 0 }}
+              idade={parseFloat(animal.idade)}
+              raca={{ id: 0, nome: animal.raca.nome, especieId: 0 }}
               distancia="Próximo"
               bairroOng={animal.ong?.bairro || "Não informado"}
               cidadeOng={animal.ong?.cidade || "Não informado"}
