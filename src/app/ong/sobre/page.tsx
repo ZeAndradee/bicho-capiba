@@ -38,7 +38,7 @@ export default function OngsSobre() {
         </div>
         <div className={styles.heroImage}>
           <Image
-            src="/icons/ongsAbout.svg"
+            src="/icons/OngsAbout.svg.png"
             alt="ONG conectando animais com famílias"
             width={600}
             height={500}
