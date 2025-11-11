@@ -661,7 +661,7 @@ export default function OngSignupPage() {
 
           <Error error={apiError} />
 
-          <form onSubmit={handleSubmit} className={styles.form}>
+          <form className={styles.form}>
             {renderStepContent()}
 
             <div className={styles.navigation}>

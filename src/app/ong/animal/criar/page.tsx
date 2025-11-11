@@ -510,9 +510,7 @@ export default function CreateAnimal() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     if (!validateForm()) {
       setApiError("Por favor, corrija os erros no formulário antes de salvar.");
       return;
@@ -744,7 +742,7 @@ export default function CreateAnimal() {
         <div className={styles.stepContainer}>
           <div className={styles.contentLayout}>
             <div className={styles.stepContent}>
-              <form onSubmit={handleSubmit} className={styles.formContainer}>
+              <form className={styles.formContainer}>
                 {currentStep === 1 && (
                   <div className={styles.card}>
                     <div className={styles.cardHeader}>
@@ -1344,7 +1342,8 @@ export default function CreateAnimal() {
 
                     {currentStep === STEPS.length && (
                       <button
-                        type="submit"
+                        type="button"
+                        onClick={handleSubmit}
                         disabled={isSaving || !isFormValid()}
                         className={styles.saveButton}
                       >

@@ -60,7 +60,7 @@ function LoginForm() {
           <p>Bem-vindo de volta! Entre para continuar sua jornada de adoção.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form className={styles.form}>
           <Error error={error} />
 
           <div className={styles.inputGroup}>

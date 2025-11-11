@@ -102,15 +102,15 @@ export const validateAdoptionForm = (
     if (!formData.sexo_animais.trim()) {
       errors.sexo_animais = "Sexo dos animais é obrigatório";
     }
+
+    if (!formData.comportamento_animais.trim()) {
+      errors.comportamento_animais = "Comportamento dos animais é obrigatório";
+    }
   }
 
   if (formData.experiencia_com_animais === null) {
     errors.experiencia_com_animais =
       "Informe se possui experiência com animais";
-  }
-
-  if (!formData.comportamento_animais.trim()) {
-    errors.comportamento_animais = "Comportamento dos animais é obrigatório";
   }
 
   if (formData.conhecimento_despesas_animais === null) {

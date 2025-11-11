@@ -151,13 +151,15 @@ export default function AdoptionModal({
     router.push(`/cadastro?redirect=${formatUrlParam(`/adote/${animal.id}`)}`);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    console.log("handleSubmit called");
+    console.log("formData:", formData);
     setIsSubmitting(true);
     setError(null);
     setValidationErrors({});
 
     const errors = validateAdoptionForm(formData);
+    console.log("validation errors:", errors);
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       setIsSubmitting(false);
@@ -337,7 +339,7 @@ export default function AdoptionModal({
   );
 
   const renderFormStep = () => (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={styles.form}>
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>Informações da Residência</h3>
 
@@ -829,9 +831,10 @@ export default function AdoptionModal({
           Voltar
         </button>
         <button
-          type="submit"
+          type="button"
           className={styles.submitButton}
           disabled={isSubmitting}
+          onClick={handleSubmit}
         >
           {isSubmitting ? "Enviando..." : "Enviar Solicitação"}
         </button>

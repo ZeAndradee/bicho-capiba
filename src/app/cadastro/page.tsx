@@ -104,7 +104,7 @@ function SignupForm() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form className={styles.form}>
           <Error error={apiError} />
           <div className={styles.nameRow}>
             <div className={styles.inputGroup}>
