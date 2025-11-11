@@ -13,7 +13,7 @@ interface Animal {
   nome: string;
   images: string[];
   sexo: "M" | "F";
-  idade: number;
+  idade: string;
   raca: string;
   distancia: string;
   bairroOng: string;
@@ -36,7 +36,11 @@ interface AnimalInfoProps {
   shouldOpenModal?: boolean;
 }
 
-export default function AnimalInfo({ animal, ong, shouldOpenModal = false }: AnimalInfoProps) {
+export default function AnimalInfo({
+  animal,
+  ong,
+  shouldOpenModal = false,
+}: AnimalInfoProps) {
   const [showFullStory, setShowFullStory] = useState(false);
   const [isAdoptionModalOpen, setIsAdoptionModalOpen] = useState(false);
 
@@ -74,9 +78,7 @@ export default function AnimalInfo({ animal, ong, shouldOpenModal = false }: Ani
             </div>
             <div className={styles.statItem}>
               <LuCake className={styles.statIcon} />
-              <span>
-                {animal.idade} {animal.idade === 1 ? "ano" : "anos"}
-              </span>
+              <span>{animal.idade}</span>
             </div>
             <div className={styles.statItem}>
               <LuHeartOff className={styles.statIcon} />

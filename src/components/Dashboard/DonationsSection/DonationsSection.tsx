@@ -3,9 +3,27 @@ import styles from "./DonationsSection.module.css";
 
 export default function DonationsSection() {
   const recentDonations = [
-    { id: 1, donor: "Maria Silva", amount: 150, date: "2024-01-15", animal: "Luna" },
-    { id: 2, donor: "João Santos", amount: 80, date: "2024-01-14", animal: "Rex" },
-    { id: 3, donor: "Ana Costa", amount: 200, date: "2024-01-13", animal: "Geral" },
+    {
+      id: 1,
+      donor: "Maria Silva",
+      amount: 150,
+      date: "2024-01-15",
+      animal: "Luna",
+    },
+    {
+      id: 2,
+      donor: "João Santos",
+      amount: 80,
+      date: "2024-01-14",
+      animal: "Rex",
+    },
+    {
+      id: 3,
+      donor: "Ana Costa",
+      amount: 200,
+      date: "2024-01-13",
+      animal: "Geral",
+    },
   ];
 
   const monthlyStats = {
@@ -28,7 +46,9 @@ export default function DonationsSection() {
               <DollarSign size={20} />
             </div>
             <div className={styles.statInfo}>
-              <span className={styles.statValue}>R$ {monthlyStats.currentMonth.toLocaleString()}</span>
+              <span className={styles.statValue}>
+                R$ {monthlyStats.currentMonth.toLocaleString()}
+              </span>
               <span className={styles.statLabel}>Este mês</span>
             </div>
           </div>
@@ -62,11 +82,15 @@ export default function DonationsSection() {
                 <div className={styles.donationInfo}>
                   <span className={styles.donorName}>{donation.donor}</span>
                   <span className={styles.donationTarget}>
-                    {donation.animal === "Geral" ? "Doação geral" : `Para ${donation.animal}`}
+                    {donation.animal === "Geral"
+                      ? "Doação geral"
+                      : `Para ${donation.animal}`}
                   </span>
                 </div>
                 <div className={styles.donationDetails}>
-                  <span className={styles.donationAmount}>R$ {donation.amount}</span>
+                  <span className={styles.donationAmount}>
+                    R$ {donation.amount}
+                  </span>
                   <span className={styles.donationDate}>
                     <Calendar size={12} />
                     {new Date(donation.date).toLocaleDateString("pt-BR")}
@@ -74,17 +98,6 @@ export default function DonationsSection() {
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className={styles.comingSoon}>
-            <p>🚀 Em breve você poderá receber doações diretamente pela plataforma!</p>
-            <p>Recursos que estão chegando:</p>
-            <ul>
-              <li>Sistema de doações integrado</li>
-              <li>Campanhas para animais específicos</li>
-              <li>Relatórios detalhados de doações</li>
-              <li>Comunicação direta com doadores</li>
-            </ul>
           </div>
         </div>
       </div>

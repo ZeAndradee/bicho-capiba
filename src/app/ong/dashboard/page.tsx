@@ -25,15 +25,10 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.push("/entrar");
-      return;
-    }
-
     if (user) {
       loadAnimals();
     }
-  }, [user, isLoading, router]);
+  }, [user]);
 
   const loadAnimals = async () => {
     try {
@@ -63,7 +58,7 @@ export default function Dashboard() {
 
   return (
     <div className={styles.dashboard}>
-      <DashboardHeader ongName={'nome' in user ? user.nome : user.fullName} />
+      <DashboardHeader ongName={user.nome || ''} />
 
       <main className={styles.main}>
         <DashboardStats stats={stats} />

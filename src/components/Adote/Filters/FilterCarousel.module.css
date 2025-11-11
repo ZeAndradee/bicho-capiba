@@ -4,6 +4,7 @@
   gap: 60px;
   width: 100%;
   margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .arrowButton {
@@ -42,7 +43,7 @@
 }
 
 .cardItem {
-  flex: 0 0 calc((100% - 4rem) / 3.3);
+  flex: 0 0 calc((100% - 4rem) / 3);
   min-width: 220px;
 }
 
@@ -81,4 +82,135 @@
 .image {
   height: 90px;
   object-fit: contain;
+}
+
+@media (max-width: 1200px) {
+  .carousel {
+    gap: 40px;
+  }
+
+  .cardItem {
+    min-width: 200px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+    padding: 16px;
+  }
+
+  .image {
+    height: 80px;
+  }
+}
+
+@media (max-width: 968px) {
+  .carousel {
+    gap: 30px;
+    padding: 0 0.5rem;
+  }
+
+  .arrowButton {
+    width: 50px;
+    height: 50px;
+  }
+
+  .cardItem {
+    flex: 0 0 calc((100% - 2rem) / 2);
+    min-width: 180px;
+  }
+
+  .card {
+    max-height: 100px;
+  }
+
+  .title {
+    font-size: 1.4rem;
+    padding: 14px;
+  }
+
+  .image {
+    height: 70px;
+  }
+}
+
+@media (max-width: 640px) {
+  .carousel {
+    gap: 20px;
+    padding: 0 0.25rem;
+  }
+
+  .arrowButton {
+    width: 45px;
+    height: 45px;
+  }
+
+  .cardsContainer {
+    margin: 0 10px;
+  }
+
+  .cardsWrapper {
+    gap: 1rem;
+  }
+
+  .cardItem {
+    flex: 0 0 calc(100% - 20px);
+    min-width: 160px;
+  }
+
+  .card {
+    max-height: 90px;
+    flex-direction: row;
+  }
+
+  .title {
+    font-size: 1.3rem;
+    padding: 12px;
+  }
+
+  .image {
+    height: 60px;
+    padding-right: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel {
+    gap: 12px;
+  }
+
+  .arrowButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  .arrowButton svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .cardsContainer {
+    margin: 0 8px;
+  }
+
+  .cardsWrapper {
+    gap: 0.75rem;
+  }
+
+  .cardItem {
+    flex: 0 0 calc(100% - 16px);
+    min-width: 140px;
+  }
+
+  .card {
+    max-height: 80px;
+  }
+
+  .title {
+    font-size: 1.2rem;
+    padding: 10px;
+  }
+
+  .image {
+    height: 55px;
+  }
 }

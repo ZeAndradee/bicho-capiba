@@ -164,6 +164,8 @@ export const formatAge = (birthDate: string | Date): string => {
   const birth = new Date(birthDate);
   const now = new Date();
 
+  if (birth > now) return "";
+
   const totalDays = Math.floor(
     (now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24)
   );
@@ -177,6 +179,30 @@ export const formatAge = (birthDate: string | Date): string => {
     return months === 1 ? "1 mês" : `${months} meses`;
   }
 
-  const years = Math.floor(totalDays / 365);
+  let years = now.getFullYear() - birth.getFullYear();
+  const monthDiff = now.getMonth() - birth.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+    years--;
+  }
+
   return years === 1 ? "1 ano" : `${years} anos`;
+};
+
+export const getAgeInYears = (birthDate: string | Date): number => {
+  if (!birthDate) return 0;
+
+  const birth = new Date(birthDate);
+  const now = new Date();
+
+  if (birth > now) return 0;
+
+  let years = now.getFullYear() - birth.getFullYear();
+  const monthDiff = now.getMonth() - birth.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+    years--;
+  }
+
+  return years;
 };

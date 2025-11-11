@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { AuthUser } from "@/services/Auth/Auth";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { updateOngProfile } from "@/services/Ong/Ong";
@@ -22,28 +23,22 @@ import UserImage from "@/components/UI/UserImage/UserImage";
 import Error from "@/components/UI/Error/Error";
 import styles from "./page.module.css";
 
+interface OngFormData extends Partial<AuthUser> {
+  images?: Array<{ url: string }>;
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | null
+    | undefined
+    | Array<{ url: string }>;
+}
+
 export default function DashboardSettings() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, setUser } = useAuth();
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState<{
-    nome?: string | null;
-    cnpj?: string | null;
-    email?: string | null;
-    telefone?: string | null;
-    descricao?: string | null;
-    bairro?: string | null;
-    rua?: string | null;
-    numero?: string | null;
-    cidade?: string | null;
-    estado?: string | null;
-    cep?: string | null;
-    complemento?: string | null;
-    quantidadeAnimais?: number | null;
-    responsavelTecnico?: string | null;
-    images?: Array<{ url: string }>;
-    logo?: File | null;
-  }>({});
+  const [formData, setFormData] = useState<OngFormData>({});
   const [hasChanges, setHasChanges] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
   const [isLoadingCep, setIsLoadingCep] = useState(false);
@@ -60,7 +55,7 @@ export default function DashboardSettings() {
     }
 
     if (user) {
-      setFormData(user);
+      setFormData(user as OngFormData);
       setApiError("");
     }
   }, [user, isLoading, router]);
@@ -124,8 +119,7 @@ export default function DashboardSettings() {
 
       if (response.status === "OK" && response.result) {
         const { city, neighborhood, street, state } = response.result;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setFormData((prev: any) => ({
+        setFormData((prev) => ({
           ...prev,
           cidade: city || "",
           bairro: neighborhood || "",
@@ -134,11 +128,11 @@ export default function DashboardSettings() {
         }));
         setHasChanges(true);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      if (error?.name === "AbortError") {
+    } catch (error: unknown) {
+      const err = error as { name?: string; response?: { status?: number } };
+      if (err?.name === "AbortError") {
         setApiError("Tempo limite excedido ao buscar CEP. Tente novamente.");
-      } else if (error?.response?.status === 404) {
+      } else if (err?.response?.status === 404) {
         setApiError("CEP não encontrado. Verifique o código postal informado.");
       } else {
         setApiError(
@@ -161,15 +155,13 @@ export default function DashboardSettings() {
       processedValue = formatPhone(value);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: processedValue,
     }));
     setHasChanges(true);
     setJustSaved(false);
 
-    // Clear field error when user types
     if (fieldErrors[field]) {
       setFieldErrors((prev) => {
         const newErrors = { ...prev };
@@ -212,16 +204,13 @@ export default function DashboardSettings() {
       agreeToTerms: true,
     };
 
-    // Validate all steps
     const step1Errors = validateOngSignupStep(validationData, 1);
     const step2Errors = validateOngSignupStep(validationData, 2);
     const step3Errors = validateOngSignupStep(validationData, 3);
 
-    // Combine all errors and map back to formData field names
     const allErrors = { ...step1Errors, ...step2Errors, ...step3Errors };
     const mappedErrors: Record<string, string> = {};
 
-    // Map validator field names to formData field names
     if (allErrors.name) mappedErrors.nome = allErrors.name;
     if (allErrors.telefone) mappedErrors.telefone = allErrors.telefone;
     if (allErrors.descricao) mappedErrors.descricao = allErrors.descricao;
@@ -242,7 +231,6 @@ export default function DashboardSettings() {
   };
 
   const handleSave = async () => {
-    // Validate form before saving
     if (!validateForm()) {
       setApiError("Por favor, corrija os erros no formulário antes de salvar.");
       return;
@@ -267,13 +255,19 @@ export default function DashboardSettings() {
       ];
 
       Object.keys(formData).forEach((key) => {
-        const value = (formData as Record<string, unknown>)[key];
         if (
-          value !== undefined &&
-          value !== null &&
+          formData[key] !== undefined &&
+          formData[key] !== null &&
           !excludeFields.includes(key)
         ) {
-          multipartData.append(key, String(value));
+          const value = formData[key];
+          if (
+            typeof value === "string" ||
+            typeof value === "number" ||
+            typeof value === "boolean"
+          ) {
+            multipartData.append(key, String(value));
+          }
         }
       });
 
@@ -282,13 +276,13 @@ export default function DashboardSettings() {
       setSelectedFile(null);
       setImagePreview(null);
       setJustSaved(true);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      if (error?.response?.status === 400) {
+    } catch (error: unknown) {
+      const err = error as { response?: { status?: number } };
+      if (err?.response?.status === 400) {
         setApiError("Dados inválidos. Verifique os campos e tente novamente.");
-      } else if (error?.response?.status === 422) {
+      } else if (err?.response?.status === 422) {
         setApiError("Verifique os campos obrigatórios.");
-      } else if (error?.response?.status === 413) {
+      } else if (err?.response?.status === 413) {
         setApiError("Imagem muito grande. O tamanho máximo é 5MB.");
       } else {
         setApiError(
@@ -302,7 +296,7 @@ export default function DashboardSettings() {
 
   const handleReset = () => {
     if (user) {
-      setFormData(user);
+      setFormData(user as OngFormData);
       setHasChanges(false);
       setApiError("");
       setFieldErrors({});
@@ -348,9 +342,9 @@ export default function DashboardSettings() {
               <div className={styles.profileImageContainer}>
                 <UserImage
                   src={imagePreview || formData.images?.[0]?.url}
-                  alt={formData.nome || "Usuário"}
+                  alt={formData.nome}
                   size="xl"
-                  fallbackText={formData.nome || "Usuário"}
+                  fallbackText={formData.nome}
                   className={styles.profileImage}
                   editable={true}
                   disabled={isSaving}

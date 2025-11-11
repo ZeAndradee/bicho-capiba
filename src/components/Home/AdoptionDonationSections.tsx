@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa6";
 import styles from "./AdoptionDonationSections.module.css";
 
@@ -22,10 +23,12 @@ export default function AdoptionDonationSections() {
             estão esperando por um lar cheio de amor. Que tal ser você a fazer a
             diferença?
           </p>
-          <button className={styles.adoptionButton}>
-            Quero adotar
-            <FaArrowRight size={20} />
-          </button>
+          <Link href="/adote">
+            <button className={styles.adoptionButton}>
+              Quero adotar
+              <FaArrowRight size={20} />
+            </button>
+          </Link>
         </div>
       </div>
 

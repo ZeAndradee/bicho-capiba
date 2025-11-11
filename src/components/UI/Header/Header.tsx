@@ -81,13 +81,9 @@ export default function Header() {
     };
   }, []);
 
-  const displayName =
-    isOng && user && "nome" in user
-      ? user.nome
-      : user && "fullName" in user
-      ? user.fullName
-      : "";
-  const userType = isOng ? "ONG" : "Tutor";
+  const displayName = user
+    ? (isOng ? user.nome : user.fullName) || ""
+    : "";
 
   const getRightNavItems = () => {
     if (isAuthPage) {
@@ -170,7 +166,6 @@ export default function Header() {
                 <div className={styles.dropdownHeader}>
                   <span className={styles.userName}>{displayName}</span>
                   <span className={styles.userEmail}>{user.email}</span>
-                  <span className={styles.userType}>{userType}</span>
                 </div>
                 <div className={styles.dropdownDivider}></div>
                 {isOng && (
@@ -185,16 +180,16 @@ export default function Header() {
                 )}
                 {!isOng && (
                   <Link
-                    href="/favoritos"
+                    href="/perfil"
                     className={styles.dropdownItem}
                     onClick={() => setIsUserDropdownOpen(false)}
                   >
-                    <Heart size={16} />
-                    <span>Favoritos</span>
+                    <User size={16} />
+                    <span>Perfil</span>
                   </Link>
                 )}
                 <Link
-                  href={isOng ? "/ong/configuracoes" : "/configuracoes"}
+                  href={isOng ? "/ong/configuracoes" : "/perfil/configuracoes"}
                   className={styles.dropdownItem}
                   onClick={() => setIsUserDropdownOpen(false)}
                 >
@@ -254,7 +249,6 @@ export default function Header() {
                 <div className={styles.mobileUserDetails}>
                   <span className={styles.mobileUserName}>{displayName}</span>
                   <span className={styles.mobileUserEmail}>{user.email}</span>
-                  <span className={styles.mobileUserType}>{userType}</span>
                 </div>
               </div>
               {isMobileUserDropdownOpen && (
@@ -274,15 +268,15 @@ export default function Header() {
                   )}
                   {!isOng && (
                     <Link
-                      href="/favoritos"
+                      href="/perfil"
                       className={`${styles.mobileNavLink} ${styles.mobileUserLink}`}
                       onClick={() => {
                         setIsMenuOpen(false);
                         setIsMobileUserDropdownOpen(false);
                       }}
                     >
-                      <Heart size={16} />
-                      <span>Favoritos</span>
+                      <User size={16} />
+                      <span>Perfil</span>
                     </Link>
                   )}
                   <Link

@@ -456,6 +456,199 @@
   cursor: not-allowed;
 }
 
+.successContent {
+  padding: 3rem 2rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.successTitle {
+  font-family: var(--title-font);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.successText {
+  text-align: left;
+  line-height: 1.6;
+  color: var(--text-color);
+  max-width: 500px;
+  width: 100%;
+}
+
+.successText p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.successText strong {
+  color: var(--orange-capiba);
+  font-weight: 600;
+}
+
+.processContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 2rem 0;
+  border-radius: 1rem;
+  position: relative;
+}
+
+.processStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.stepIcon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 3;
+}
+
+.stepCompleted {
+  background: var(--background);
+  color: var(--yellow-capiba);
+  border: 2px solid var(--yellow-capiba);
+}
+
+.stepCurrent {
+  background: var(--background);
+  color: var(--yellow-capiba);
+  border: 2px solid var(--yellow-capiba);
+}
+
+.stepPending {
+  background: var(--background);
+  color: #ef955185;
+  border: 2px solid #ef955185;
+}
+
+.stepGreen {
+  background: var(--background);
+  color: var(--green-capiba);
+  border: 2px solid var(--green-capiba);
+}
+
+.stepYellow {
+  background: var(--background);
+  color: var(--yellow-capiba);
+  border: 2px solid var(--yellow-capiba);
+  box-shadow: 0 0 0 4px rgba(249, 202, 36, 0.2);
+}
+
+.stepOrange {
+  background: var(--background);
+  color: var(--orange-capiba);
+  border: 2px solid var(--orange-capiba);
+}
+
+.stepText {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-color);
+  line-height: 1.3;
+  max-width: 80px;
+}
+
+.connectionLine {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background-color: #e5e5e5;
+  transition: background-color 0.3s ease;
+  z-index: 1;
+}
+
+.connectionLineCompleted {
+  background-color: var(--yellow-capiba);
+}
+
+.connectionLine.stepConnectorCompleted {
+  background-color: var(--orange-capiba);
+}
+
+.connectionLine.stepConnectorGreen {
+  background-color: var(--green-capiba);
+}
+
+.connectionLine.stepConnectorYellow {
+  background-color: var(--yellow-capiba);
+}
+
+.connectionLine.stepConnectorOrange {
+  background-color: var(--orange-capiba);
+}
+
+.successActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.successButton {
+  background: var(--background-secondary);
+  color: var(--text-color);
+  border: 2px solid #e1e1e1;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--title-font);
+  min-width: 140px;
+}
+
+.successButton:hover {
+  background: #e5e5e5;
+  border-color: #d1d1d1;
+}
+
+.statusButton {
+  background: var(--orange-capiba);
+  color: white;
+  border: 2px solid var(--orange-capiba);
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--title-font);
+  min-width: 180px;
+}
+
+.statusButton:hover {
+  background: #c23813;
+  border-color: #c23813;
+}
+
 @media (max-width: 768px) {
   .backdrop {
     padding: 0.5rem;
@@ -532,6 +725,51 @@
   .explanationActions {
     flex-direction: column-reverse;
     gap: 0.75rem;
+  }
+
+  .successContent {
+    padding: 2rem 1.5rem 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .successTitle {
+    font-size: 1.8rem;
+    line-height: 1.3;
+  }
+
+  .successText {
+    max-width: 100%;
+  }
+
+  .successActions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .successButton,
+  .statusButton {
+    width: 100%;
+    padding: 1rem 1.5rem;
+  }
+
+  .processContainer {
+    padding: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  .stepIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .stepText {
+    font-size: 0.8rem;
+    max-width: 70px;
+  }
+
+  .connectionLine {
+    margin: 0 0.5rem;
   }
 
   .radioGroup {
@@ -636,5 +874,55 @@
 
   .explanationText {
     font-size: 0.9rem;
+  }
+
+  .successContent {
+    padding: 1.5rem 1.25rem 1.25rem;
+    gap: 1rem;
+  }
+
+  .successTitle {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .successText {
+    font-size: 0.9rem;
+  }
+
+  .successText p {
+    font-size: 0.9rem;
+  }
+
+  .processContainer {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .processStep {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .stepIcon {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .stepText {
+    font-size: 0.9rem;
+    align-self: center;
+    max-width: none;
+  }
+
+  .connectionLine {
+    display: none;
   }
 }

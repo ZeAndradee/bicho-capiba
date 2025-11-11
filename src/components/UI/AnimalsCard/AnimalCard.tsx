@@ -11,16 +11,14 @@ import {
 import Link from "next/link";
 import ImageWithFallback from "../Images/ImageWithFallback";
 import { likeAnimal, unlikeAnimal } from "@/services/Animals/Animal";
-import { formatAge } from "@/utils/formatters";
 import styles from "./AnimalCard.module.css";
 
 interface AnimalCardProps {
   id: string;
   nome: string;
-  image: string;
+  image: string | null;
   sexo: "M" | "F";
-  idade?: number;
-  data_nascimento?: string;
+  idade: string;
   raca: { id: number; nome: string; especieId: number };
   distancia: string;
   bairroOng: string;
@@ -28,6 +26,7 @@ interface AnimalCardProps {
   isFavorite?: boolean;
   onFavoriteClick?: (id: string) => void;
   isPreview?: boolean;
+  size?: "default" | "compact";
 }
 
 export default function AnimalCard({
@@ -36,7 +35,7 @@ export default function AnimalCard({
   image,
   sexo,
   idade,
-  data_nascimento,
+
   raca,
   distancia,
   bairroOng,
@@ -44,6 +43,7 @@ export default function AnimalCard({
   isFavorite = false,
   onFavoriteClick,
   isPreview = false,
+  size = "default",
 }: AnimalCardProps) {
   const [isImageHovered, setIsImageHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -51,28 +51,6 @@ export default function AnimalCard({
   useEffect(() => {
     setImageError(false);
   }, [image]);
-
-  const getAgeDisplay = () => {
-    if (data_nascimento) {
-      return formatAge(data_nascimento);
-    }
-    if (idade !== undefined) {
-      return idade === 1 ? "1 ano" : `${idade} anos`;
-    }
-    return "0 anos";
-  };
-
-  const getAgeValue = () => {
-    if (data_nascimento) {
-      const birth = new Date(data_nascimento);
-      const now = new Date();
-      const totalDays = Math.floor(
-        (now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24)
-      );
-      return Math.floor(totalDays / 365);
-    }
-    return idade || 0;
-  };
 
   const handleFavoriteClick = async () => {
     try {
@@ -88,7 +66,11 @@ export default function AnimalCard({
   };
 
   return (
-    <div className={styles.card}>
+    <div
+      className={`${styles.card} ${
+        size === "compact" ? styles.cardCompact : ""
+      }`}
+    >
       <div
         className={`${styles.imageContainer} ${
           isImageHovered ? styles.imageHovered : ""
@@ -100,7 +82,7 @@ export default function AnimalCard({
             onMouseEnter={() => setIsImageHovered(true)}
             onMouseLeave={() => setIsImageHovered(false)}
           >
-            {imageError || image.includes("placeholder") ? (
+            {imageError || image?.includes("placeholder") ? (
               <ImageWithFallback
                 src="/images/placeholder-animal.jpg"
                 alt={nome}
@@ -110,7 +92,7 @@ export default function AnimalCard({
               />
             ) : (
               <img
-                src={image}
+                src={image || ""}
                 alt={nome}
                 className={styles.image}
                 onError={() => setImageError(true)}
@@ -130,7 +112,7 @@ export default function AnimalCard({
             onMouseLeave={() => setIsImageHovered(false)}
           >
             <ImageWithFallback
-              src={image}
+              src={image || ""}
               alt={nome}
               className={styles.image}
               fill
@@ -191,24 +173,12 @@ export default function AnimalCard({
         </div>
 
         <div className={styles.infoRow}>
-          {isPreview ? (
-            <div className={styles.ageLink}>
-              <div className={styles.infoItem}>
-                <FaClock className={styles.icon} />
-                <span className={styles.text}>{getAgeDisplay()}</span>
-              </div>
+          <div className={styles.ageLink}>
+            <div className={styles.infoItem}>
+              <FaClock className={styles.icon} />
+              <span className={styles.text}>{idade || "0 anos"}</span>
             </div>
-          ) : (
-            <Link
-              href={`/adote/animais?age=${getAgeValue()}`}
-              className={styles.ageLink}
-            >
-              <div className={styles.infoItem}>
-                <FaClock className={styles.icon} />
-                <span className={styles.text}>{getAgeDisplay()}</span>
-              </div>
-            </Link>
-          )}
+          </div>
           {isPreview ? (
             <div className={styles.speciesLink}>
               <div className={styles.infoItem}>

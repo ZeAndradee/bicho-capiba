@@ -90,16 +90,15 @@
 .feed {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  column-gap: 1.5rem;
-  row-gap: 3.5rem;
+  gap: 2rem;
   padding: 24px 0;
+  justify-items: center;
 }
 
 .observer {
   height: 1px;
   width: 100%;
 }
-
 
 @media (max-width: 768px) {
   .header {
@@ -138,6 +137,7 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 16px;
     padding: 16px 0;
+    max-width: 100%;
   }
 }
 
@@ -170,5 +170,8 @@
   .feed {
     grid-template-columns: 1fr;
     gap: 16px;
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
   }
 }

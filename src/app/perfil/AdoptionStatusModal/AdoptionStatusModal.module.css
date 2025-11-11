@@ -1,0 +1,570 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--background);
+  border-radius: 1rem;
+  animation: modalSlideIn 0.3s ease-out;
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 2rem 1rem 2rem;
+  border-bottom: 1px solid #e5e5e5;
+  flex-shrink: 0;
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.title {
+  font-family: var(--title-font);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: var(--background-secondary);
+}
+
+.content {
+  padding: 1.5rem 2rem;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.processHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.statusBadge {
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 2px solid;
+}
+
+.processSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.processTitle {
+  font-family: var(--title-font);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.dateInfo {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.dateText {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.processContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--background-secondary);
+  border-radius: 1rem;
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.processStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.stepIcon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 3;
+}
+
+.stepCompleted {
+  background: var(--background);
+  color: var(--orange-capiba);
+  border: 2px solid var(--orange-capiba);
+}
+
+.stepCurrent {
+  background: var(--orange-capiba);
+  color: white;
+  border: 2px solid var(--orange-capiba);
+}
+
+.stepPending {
+  background: var(--background);
+  color: rgba(221, 67, 25, 0.4);
+  border: 2px solid rgba(221, 67, 25, 0.3);
+}
+
+.stepRejected {
+  background: var(--background);
+  color: var(--orange-capiba);
+  border: 2px solid var(--orange-capiba);
+}
+
+.stepGreen {
+  background: var(--background);
+  color: var(--green-capiba);
+  border: 2px solid var(--green-capiba);
+}
+
+.stepYellow {
+  background: var(--background);
+  color: var(--yellow-capiba);
+  border: 2px solid var(--yellow-capiba);
+}
+
+.stepOrange {
+  background: var(--background);
+  color: var(--orange-capiba);
+  border: 2px solid var(--orange-capiba);
+}
+
+.stepText {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-color);
+  line-height: 1.3;
+  max-width: 80px;
+}
+
+.connectionLine {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background-color: #e5e5e5;
+  transition: background-color 0.3s ease;
+  z-index: 1;
+}
+
+.connectionLine.stepConnectorCompleted {
+  background-color: var(--orange-capiba);
+}
+
+.connectionLine.stepConnectorGreen {
+  background-color: var(--green-capiba);
+}
+
+.connectionLine.stepConnectorYellow {
+  background-color: var(--yellow-capiba);
+}
+
+.connectionLine.stepConnectorOrange {
+  background-color: var(--orange-capiba);
+}
+
+.nextStepsContent {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.nextStepsTitle {
+  font-family: var(--title-font);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 1rem 0;
+}
+
+.nextStepsList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+}
+
+.nextStepsList li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+.nextStepsList li::before {
+  content: "•";
+  color: var(--orange-capiba);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  font-size: 1.2rem;
+}
+
+.estimatedTime {
+  margin: 0;
+  padding: 1rem;
+  background: rgba(221, 67, 25, 0.1);
+  border-radius: 0.5rem;
+  border: 1px solid;
+  border-color: var(--orange-capiba);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.estimatedTimeIcon {
+  color: var(--orange-capiba);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.estimatedTime strong {
+  color: var(--orange-capiba);
+}
+
+.statusYellow .nextStepsTitle {
+  color: var(--yellow-capiba);
+}
+
+.statusYellow .estimatedTime {
+  background: rgba(249, 202, 36, 0.1);
+  border-color: var(--yellow-capiba);
+}
+
+.statusYellow .estimatedTimeIcon {
+  color: var(--yellow-capiba);
+}
+
+.statusYellow .estimatedTime strong {
+  color: var(--yellow-capiba);
+}
+
+.statusGreen .nextStepsTitle {
+  color: var(--green-capiba);
+}
+
+.statusOrange .nextStepsTitle {
+  color: var(--orange-capiba);
+}
+
+.statusYellow .nextStepsList li::before {
+  color: var(--yellow-capiba);
+}
+
+.statusGreen .nextStepsList li::before {
+  color: var(--green-capiba);
+}
+
+.statusOrange .nextStepsList li::before {
+  color: var(--orange-capiba);
+}
+
+.approvedMessage {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid #21944d;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.approvedMessageText {
+  margin: 0;
+  color: #166534;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.contactInfo {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.rejectionSection {
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.rejectionTitle {
+  font-family: var(--title-font);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #991b1b;
+  margin: 0 0 1rem 0;
+}
+
+.rejectionContent {
+  margin: 0;
+}
+
+.rejectionText {
+  margin: 0;
+  color: #991b1b;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.contactSection {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.contactTitle {
+  font-family: var(--title-font);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 1rem 0;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+.contactIcon {
+  color: var(--orange-capiba);
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .backdrop {
+    padding: 0.5rem;
+  }
+
+  .modal {
+    border-radius: 0.75rem;
+    max-height: 95vh;
+    max-width: 100%;
+  }
+
+  .header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+
+  .content {
+    padding: 1rem 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .processTitle {
+    font-size: 1.2rem;
+  }
+
+  .animalInfo {
+    padding: 1.25rem;
+  }
+
+  .processContainer {
+    padding: 1.25rem;
+  }
+
+  .stepIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .stepText {
+    font-size: 0.8rem;
+    max-width: 70px;
+  }
+
+  .nextStepsContent {
+    padding: 1.25rem;
+  }
+
+  .rejectionSection {
+    padding: 1.25rem;
+  }
+
+  .contactSection {
+    padding: 1.25rem;
+  }
+
+  .dateInfo {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .processHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .backdrop {
+    padding: 0.25rem;
+  }
+
+  .header {
+    padding: 1.25rem 1.25rem 0.75rem 1.25rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  .content {
+    padding: 1rem 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .processTitle {
+    font-size: 1.1rem;
+  }
+
+  .animalInfo {
+    padding: 1rem;
+  }
+
+  .processContainer {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .processStep {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .stepIcon {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .stepText {
+    font-size: 0.9rem;
+    align-self: center;
+    max-width: none;
+  }
+
+  .connectionLine {
+    display: none;
+  }
+
+  .nextStepsContent {
+    padding: 1rem;
+  }
+
+  .rejectionSection {
+    padding: 1rem;
+  }
+
+  .contactSection {
+    padding: 1rem;
+  }
+
+  .dateText {
+    font-size: 0.8rem;
+  }
+}

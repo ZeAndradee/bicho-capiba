@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import AnimalCard from "@/components/UI/AnimalsCard/AnimalCard";
+import { formatAge, getAgeInYears } from "@/utils/formatters";
 import Filter, { FilterOption } from "@/components/UI/Filter/Filter";
 import CloseAnimalsFeedSkeleton from "@/components/UI/Skeletons/CloseAnimalsFeedSkeleton";
 import AnimalCardSkeleton from "@/components/UI/Skeletons/AnimalCardSkeleton";
@@ -73,15 +74,16 @@ const CloseAnimalsFeed = () => {
       nome: string;
       sexo: "M" | "F";
       idade: string;
+      dataNascimento?: string;
       raca: { nome: string };
       especie: string;
       fotos?: Array<{ url: string }>;
       ong?: { bairro?: string; cidade?: string };
+      isLiked: boolean;
     }>
   >([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [filters, setFilters] = useState<Filters>({
@@ -143,10 +145,12 @@ const CloseAnimalsFeed = () => {
   }, [currentPage, loadAnimals]);
 
   const handleFavoriteClick = (animalId: string) => {
-    setFavorites((prev) =>
-      prev.includes(animalId)
-        ? prev.filter((id) => id !== animalId)
-        : [...prev, animalId]
+    setAnimals((prev) =>
+      prev.map((animal) =>
+        animal.uuid === animalId
+          ? { ...animal, isLiked: !animal.isLiked }
+          : animal
+      )
     );
   };
 
@@ -173,10 +177,7 @@ const CloseAnimalsFeed = () => {
   );
 
   const filteredAnimals = animals.filter((animal) => {
-    if (
-      filters.idade &&
-      animal.idade !== filters.idade.replace(" anos", "")
-    )
+    if (filters.idade && animal.idade !== filters.idade.replace(" anos", ""))
       return false;
     if (filters.sexo && animal.sexo !== filters.sexo) return false;
     if (filters.distance) return false;
@@ -298,16 +299,25 @@ const CloseAnimalsFeed = () => {
             <AnimalCard
               key={animal.uuid}
               id={animal.uuid}
-              nome={animal.nome}
-              image={animal.fotos?.[0]?.url || ""}
+              nome={animal.nome || "Nome animal"}
+              image={animal.fotos?.[0]?.url || null}
               sexo={animal.sexo}
-              idade={parseFloat(animal.idade)}
-              raca={{ id: 0, nome: animal.raca.nome, especieId: 0 }}
+              idade={
+                animal.dataNascimento
+                  ? formatAge(animal.dataNascimento)
+                  : `0 anos`
+              }
+              raca={{
+                id: 0,
+                nome: animal.raca?.nome || "Sem raça definida",
+                especieId: 0,
+              }}
               distancia="Próximo"
               bairroOng={animal.ong?.bairro || "Não informado"}
               cidadeOng={animal.ong?.cidade || "Não informado"}
-              isFavorite={favorites.includes(animal.uuid)}
+              isFavorite={animal.isLiked}
               onFavoriteClick={handleFavoriteClick}
+              size="compact"
             />
           ))}
           {loadingMore && (

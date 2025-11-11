@@ -1,40 +1,34 @@
 import { getApiInstance } from "@/hooks/Api";
 
-export interface BaseUser {
+export interface AuthUser {
   uuid: string;
   email: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
-}
+  type: 'user' | 'ong';
 
-export interface User extends BaseUser {
-  fullName: string;
+  fullName?: string;
   dataNascimento?: string | null;
   endereco?: string | null;
   telefone?: string | null;
-  superUser: boolean;
-}
+  superUser?: boolean;
 
-export interface Ong extends BaseUser {
-  nome: string;
-  cnpj: string;
-  telefone: string;
-  descricao: string;
-  bairro: string;
-  rua: string;
-  numero: string;
-  cidade: string;
-  estado: string;
+  nome?: string;
+  cnpj?: string;
+  descricao?: string;
+  bairro?: string;
+  rua?: string;
+  numero?: string;
+  cidade?: string;
+  estado?: string;
   complemento?: string;
   cep?: string;
-  quantidadeAnimais: number;
-  responsavelTecnico: string;
+  quantidadeAnimais?: number;
+  responsavelTecnico?: string;
   latitude?: number | null;
   longitude?: number | null;
 }
-
-export type AuthUser = User | Ong;
 
 export interface LoginData {
   email: string;

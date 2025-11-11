@@ -11,6 +11,12 @@
   max-width: 320px;
 }
 
+.cardCompact {
+  width: 300px;
+  min-width: 300px;
+  max-width: 300px;
+}
+
 .imageContainer {
   position: relative;
   width: 100%;
@@ -18,6 +24,10 @@
   overflow: hidden;
 
   border-radius: 16px;
+}
+
+.cardCompact .imageContainer {
+  height: 200px;
 }
 
 .imageContainer::after {

@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const isOng = user ? 'cnpj' in user : false;
+  const isOng = user?.type === 'ong';
 
   const checkAuth = async () => {
     try {
@@ -46,7 +46,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    checkAuth();
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname;
+      const publicPaths = ['/entrar', '/cadastrar', '/'];
+      const isPublicPath = publicPaths.includes(currentPath);
+
+      if (!isPublicPath) {
+        checkAuth();
+      } else {
+        setIsLoading(false);
+      }
+    }
   }, []);
 
   const handleLogin = async (data: LoginData) => {

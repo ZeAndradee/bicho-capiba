@@ -1,6 +1,6 @@
 "use client";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -9,11 +9,11 @@ import AnimalInfo from "@/components/Animal/AnimalInfo/AnimalInfo";
 import AnimalSkeleton from "@/components/UI/Skeletons/AnimalSkeleton/AnimalSkeleton";
 import { fetchAnimalById } from "@/services/Animals/Animal";
 import styles from "./page.module.css";
+import { formatAge } from "@/utils/formatters";
 
 interface ApiAnimal {
   uuid: string;
   nome: string;
-  idade: string;
   sexo: "M" | "F";
   porte: string;
   cor: string;
@@ -45,7 +45,7 @@ interface Animal {
   nome: string;
   images: string[];
   sexo: "M" | "F";
-  idade: number;
+  idade: string;
   raca: string;
   distancia: string;
   bairroOng: string;
@@ -66,9 +66,12 @@ const transformApiData = (apiData: ApiAnimal): { animal: Animal; ong: Ong } => {
   const animal: Animal = {
     id: apiData.uuid,
     nome: apiData.nome,
-    images: apiData.fotos.length > 0 ? apiData.fotos.map(foto => foto.url) : ["/icons/capibaCrabOrange.svg"],
+    images:
+      apiData.fotos.length > 0
+        ? apiData.fotos.map((foto) => foto.url)
+        : ["/icons/capibaCrabOrange.svg"],
     sexo: apiData.sexo,
-    idade: parseInt(apiData.idade),
+    idade: formatAge(apiData.dataNascimento),
     raca: apiData.raca,
     distancia: "N/A",
     bairroOng: "N/A",
@@ -93,7 +96,7 @@ export default function AnimalProfile() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const animalId = params.id as string;
-  const isRedirected = searchParams.get('redirected') === 'true';
+  const isRedirected = searchParams.get("redirected") === "true";
   const [animal, setAnimal] = useState<Animal | null>(null);
   const [ong, setOng] = useState<Ong | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,7 +107,8 @@ export default function AnimalProfile() {
 
       try {
         const response = await fetchAnimalById(animalId);
-        const { animal: transformedAnimal, ong: transformedOng } = transformApiData(response.result);
+        const { animal: transformedAnimal, ong: transformedOng } =
+          transformApiData(response.result);
         setAnimal(transformedAnimal);
         setOng(transformedOng);
       } catch (error) {

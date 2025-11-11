@@ -225,12 +225,6 @@ export default function CreateAnimal() {
     images: [],
   });
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.push("/entrar");
-      return;
-    }
-  }, [user, isLoading, router]);
 
   useEffect(() => {
     const loadFilters = async () => {
@@ -620,8 +614,6 @@ export default function CreateAnimal() {
         ? imagePreviews[0].preview
         : "/images/placeholder-animal.jpg";
 
-    const isOng = user && "cnpj" in user;
-    const ongUser = isOng ? user : null;
 
     return {
       id: "preview",
@@ -632,15 +624,15 @@ export default function CreateAnimal() {
         : formData.sexo === "Fêmea"
         ? "F"
         : "M") as "M" | "F",
-      data_nascimento: formData.data_nascimento,
+      idade: formData.data_nascimento ? formatAge(formData.data_nascimento) : "Idade não informada",
       raca: {
         id: 0,
         nome: (showCustomRaca ? customRaca : formData.raca) || "Raça",
         especieId: 0,
       },
       distancia: "0km",
-      bairroOng: ongUser?.bairro || "Seu bairro",
-      cidadeOng: ongUser?.cidade || "Sua cidade",
+      bairroOng: user?.bairro || "Seu bairro",
+      cidadeOng: user?.cidade || "Sua cidade",
       isFavorite: false,
     };
   };
@@ -1325,10 +1317,7 @@ export default function CreateAnimal() {
                             <strong>
                               <MapPin size={18} /> Localização:
                             </strong>{" "}
-                            {user &&
-                            "cnpj" in user &&
-                            user.bairro &&
-                            user.cidade
+                            {user && user.bairro && user.cidade
                               ? `${user.bairro}, ${user.cidade}`
                               : "Não informado"}
                           </div>

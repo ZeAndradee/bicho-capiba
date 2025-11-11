@@ -15,10 +15,11 @@ const createApiInstance = () => {
     (response) => response,
     async (error) => {
       if (error.response?.status === 401) {
-        try {
-          await instance.post("/auth/logout");
-        } catch (logoutError) {
-          return Promise.reject(logoutError);
+        if (typeof window !== 'undefined') {
+          const currentPath = window.location.pathname;
+          if (currentPath !== '/entrar' && currentPath !== '/cadastrar' && currentPath !== '/') {
+            window.location.href = '/entrar';
+          }
         }
       }
       return Promise.reject(error);

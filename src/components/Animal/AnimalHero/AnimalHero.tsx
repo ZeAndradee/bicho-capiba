@@ -10,7 +10,7 @@ interface Animal {
   nome: string;
   images: string[];
   sexo: "M" | "F";
-  idade: number;
+  idade: string;
   raca: string;
   distancia: string;
   bairroOng: string;

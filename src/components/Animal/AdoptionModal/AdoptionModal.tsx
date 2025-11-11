@@ -6,14 +6,15 @@ import { IoClose } from "react-icons/io5";
 import {
   FaQuestionCircle,
   FaArrowRight,
-  FaHeart,
-  FaShieldAlt,
+  FaClock,
+  FaCheck,
 } from "react-icons/fa";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatUrlParam } from "@/utils/formatters";
 import { getApiInstance } from "@/hooks/Api";
 import { handleApiError, ErrorState } from "@/utils/ErrorHandler";
 import Error from "@/components/UI/Error/Error";
+import { validateAdoptionForm } from "@/validators/adoption";
 import styles from "./AdoptionModal.module.css";
 
 interface Animal {
@@ -29,26 +30,26 @@ interface AdoptionModalProps {
 }
 
 interface FormData {
-  tipoResidencia: string;
-  areaExterna: boolean | null;
-  possuiAnimais: boolean | null;
-  quantidadeAnimais: number | null;
-  telaProtetora: boolean | null;
-  quantidadeMoradores: number | null;
-  idadeAnimais: string;
-  sexoAnimais: string;
-  comportamentoAnimais: string;
-  possuiCriancas: boolean | null;
-  quantidadeCriancas: number | null;
-  criancaNecessidadeEspecial: boolean | null;
-  faixaEtariaCriancas: string;
-  tipoNecessidadeCriancas: string;
-  composicaoFamiliar: string;
-  familiarNecessidadeEspecial: boolean | null;
-  tipoNecessidadeEspecialFamiliar: string;
-  experienciaComAnimais: boolean | null;
-  conhecimentoDespesasAnimais: boolean | null;
-  tempoDisponivel: string;
+  tipo_residencia: string;
+  area_externa: boolean | null;
+  possui_animais: boolean | null;
+  quantidade_animais: string;
+  tela_protetora: boolean | null;
+  quantidade_moradores: string;
+  idade_animais: string;
+  sexo_animais: string;
+  comportamento_animais: string;
+  possui_criancas: boolean | null;
+  quantidade_criancas: string;
+  crianca_necessidade_especial: boolean | null;
+  faixa_etaria_criancas: string;
+  tipo_necessidade_criancas: string;
+  composicao_familiar: string;
+  familiar_necessidade_especial: boolean | null;
+  tipo_necessidade_especial_familiar: string;
+  experiencia_com_animais: boolean | null;
+  conhecimento_despesas_animais: boolean | null;
+  tempo_disponivel: string;
 }
 
 export default function AdoptionModal({
@@ -62,31 +63,34 @@ export default function AdoptionModal({
     "auth" | "explanation" | "form" | "success"
   >("auth");
   const [formData, setFormData] = useState<FormData>({
-    tipoResidencia: "",
-    areaExterna: null,
-    possuiAnimais: null,
-    quantidadeAnimais: null,
-    telaProtetora: null,
-    quantidadeMoradores: null,
-    idadeAnimais: "",
-    sexoAnimais: "",
-    comportamentoAnimais: "",
-    possuiCriancas: null,
-    quantidadeCriancas: null,
-    criancaNecessidadeEspecial: null,
-    faixaEtariaCriancas: "",
-    tipoNecessidadeCriancas: "",
-    composicaoFamiliar: "",
-    familiarNecessidadeEspecial: null,
-    tipoNecessidadeEspecialFamiliar: "",
-    experienciaComAnimais: null,
-    conhecimentoDespesasAnimais: null,
-    tempoDisponivel: "",
+    tipo_residencia: "",
+    area_externa: null,
+    possui_animais: null,
+    quantidade_animais: "",
+    tela_protetora: null,
+    quantidade_moradores: "",
+    idade_animais: "",
+    sexo_animais: "",
+    comportamento_animais: "",
+    possui_criancas: null,
+    quantidade_criancas: "",
+    crianca_necessidade_especial: null,
+    faixa_etaria_criancas: "",
+    tipo_necessidade_criancas: "",
+    composicao_familiar: "",
+    familiar_necessidade_especial: null,
+    tipo_necessidade_especial_familiar: "",
+    experiencia_com_animais: null,
+    conhecimento_despesas_animais: null,
+    tempo_disponivel: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const [error, setError] = useState<ErrorState | null>(null);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
   useEffect(() => {
     if (isOpen) {
@@ -129,8 +133,10 @@ export default function AdoptionModal({
     }
   };
 
-
-  const handleInputChange = (field: keyof FormData, value: string | boolean) => {
+  const handleInputChange = (
+    field: keyof FormData,
+    value: string | boolean
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -149,11 +155,19 @@ export default function AdoptionModal({
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+    setValidationErrors({});
+
+    const errors = validateAdoptionForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const api = getApiInstance();
       await api.post("/adoptions", {
-        animalId: animal.id,
+        animal_id: animal.id,
         ...formData,
       });
 
@@ -217,9 +231,6 @@ export default function AdoptionModal({
 
   const renderSuccessStep = () => (
     <div className={styles.successContent}>
-      <div className={styles.successIcon}>
-        <FaHeart />
-      </div>
       <h2 className={styles.successTitle}>Solicitação Enviada!</h2>
       <div className={styles.successText}>
         <p>
@@ -228,24 +239,57 @@ export default function AdoptionModal({
         </p>
         <p>
           A ONG responsável irá analisar sua solicitação e entrará em contato
-          com você em breve através do email cadastrado.
+          com você através do email cadastrado.
         </p>
         <p>
-          <strong>Próximos passos:</strong>
+          <strong>Acompanhe o status:</strong> Você pode verificar o andamento
+          da sua solicitação a qualquer momento através do seu perfil ou por
+          email.
         </p>
-        <ul className={styles.successList}>
-          <li>Aguarde o contato da ONG</li>
-          <li>Prepare a documentação solicitada</li>
-          <li>Agende uma visita se aprovado</li>
-        </ul>
+        <p>
+          <strong>Processo de adoção:</strong>
+        </p>
+        <div className={styles.processContainer}>
+          <div className={styles.processStep}>
+            <div className={`${styles.stepIcon} ${styles.stepCompleted}`}>
+              <FaCheck />
+            </div>
+            <span className={styles.stepText}>Solicitação Enviada</span>
+            <div
+              className={`${styles.connectionLine} ${styles.connectionLineCompleted}`}
+            ></div>
+          </div>
+          <div className={styles.processStep}>
+            <div className={`${styles.stepIcon} ${styles.stepCurrent}`}>
+              <FaClock />
+            </div>
+            <span className={styles.stepText}>Em Análise</span>
+            <div className={styles.connectionLine}></div>
+          </div>
+          <div className={styles.processStep}>
+            <div className={`${styles.stepIcon} ${styles.stepPending}`}>
+              <FaCheck />
+            </div>
+            <span className={styles.stepText}>Aprovado</span>
+          </div>
+        </div>
       </div>
-      <button
-        type="button"
-        className={styles.successButton}
-        onClick={onClose}
-      >
-        Entendi
-      </button>
+      <div className={styles.successActions}>
+        <button
+          type="button"
+          className={styles.statusButton}
+          onClick={() => router.push("/perfil")}
+        >
+          Ver Status de Adoção
+        </button>
+        <button
+          type="button"
+          className={styles.successButton}
+          onClick={onClose}
+        >
+          Entendi
+        </button>
+      </div>
     </div>
   );
 
@@ -301,9 +345,9 @@ export default function AdoptionModal({
           <label className={styles.label}>Tipo de Residência</label>
           <select
             className={styles.select}
-            value={formData.tipoResidencia}
+            value={formData.tipo_residencia}
             onChange={(e) =>
-              handleInputChange("tipoResidencia", e.target.value)
+              handleInputChange("tipo_residencia", e.target.value)
             }
             required
           >
@@ -313,6 +357,11 @@ export default function AdoptionModal({
             <option value="chacara">Chácara</option>
             <option value="sitio">Sítio</option>
           </select>
+          {validationErrors.tipo_residencia && (
+            <span className={styles.error}>
+              {validationErrors.tipo_residencia}
+            </span>
+          )}
         </div>
 
         <div className={styles.field}>
@@ -320,29 +369,34 @@ export default function AdoptionModal({
             Possui área externa?
             <Tooltip
               text="Quintal, varanda ou área descoberta onde o animal possa ficar"
-              id="areaExterna"
+              id="area_externa"
             />
           </label>
           <div className={styles.radioGroup}>
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="areaExterna"
-                checked={formData.areaExterna === true}
-                onChange={() => handleInputChange("areaExterna", true)}
+                name="area_externa"
+                checked={formData.area_externa === true}
+                onChange={() => handleInputChange("area_externa", true)}
               />
               Sim
             </label>
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="areaExterna"
-                checked={formData.areaExterna === false}
-                onChange={() => handleInputChange("areaExterna", false)}
+                name="area_externa"
+                checked={formData.area_externa === false}
+                onChange={() => handleInputChange("area_externa", false)}
               />
               Não
             </label>
           </div>
+          {validationErrors.area_externa && (
+            <span className={styles.error}>
+              {validationErrors.area_externa}
+            </span>
+          )}
         </div>
 
         <div className={styles.field}>
@@ -350,29 +404,34 @@ export default function AdoptionModal({
             Possui tela protetora?
             <Tooltip
               text="Telas de proteção em janelas e varandas para evitar quedas"
-              id="telaProtetora"
+              id="tela_protetora"
             />
           </label>
           <div className={styles.radioGroup}>
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="telaProtetora"
-                checked={formData.telaProtetora === true}
-                onChange={() => handleInputChange("telaProtetora", true)}
+                name="tela_protetora"
+                checked={formData.tela_protetora === true}
+                onChange={() => handleInputChange("tela_protetora", true)}
               />
               Sim
             </label>
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="telaProtetora"
-                checked={formData.telaProtetora === false}
-                onChange={() => handleInputChange("telaProtetora", false)}
+                name="tela_protetora"
+                checked={formData.tela_protetora === false}
+                onChange={() => handleInputChange("tela_protetora", false)}
               />
               Não
             </label>
           </div>
+          {validationErrors.tela_protetora && (
+            <span className={styles.error}>
+              {validationErrors.tela_protetora}
+            </span>
+          )}
         </div>
 
         <div className={styles.field}>
@@ -382,16 +441,18 @@ export default function AdoptionModal({
           <input
             type="number"
             className={styles.input}
-            value={formData.quantidadeMoradores || ""}
+            value={formData.quantidade_moradores || ""}
             onChange={(e) =>
-              handleInputChange(
-                "quantidadeMoradores",
-                e.target.value
-              )
+              handleInputChange("quantidade_moradores", e.target.value)
             }
             min="1"
             required
           />
+          {validationErrors.quantidade_moradores && (
+            <span className={styles.error}>
+              {validationErrors.quantidade_moradores}
+            </span>
+          )}
         </div>
       </div>
 
@@ -404,37 +465,34 @@ export default function AdoptionModal({
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="possuiAnimais"
-                checked={formData.possuiAnimais === true}
-                onChange={() => handleInputChange("possuiAnimais", true)}
+                name="possui_animais"
+                checked={formData.possui_animais === true}
+                onChange={() => handleInputChange("possui_animais", true)}
               />
               Sim
             </label>
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="possuiAnimais"
-                checked={formData.possuiAnimais === false}
-                onChange={() => handleInputChange("possuiAnimais", false)}
+                name="possui_animais"
+                checked={formData.possui_animais === false}
+                onChange={() => handleInputChange("possui_animais", false)}
               />
               Não
             </label>
           </div>
         </div>
 
-        {formData.possuiAnimais === true && (
+        {formData.possui_animais === true && (
           <>
             <div className={styles.field}>
               <label className={styles.label}>Quantos animais?</label>
               <input
                 type="number"
                 className={styles.input}
-                value={formData.quantidadeAnimais || ""}
+                value={formData.quantidade_animais || ""}
                 onChange={(e) =>
-                  handleInputChange(
-                    "quantidadeAnimais",
-                    e.target.value
-                  )
+                  handleInputChange("quantidade_animais", e.target.value)
                 }
                 min="1"
                 required
@@ -446,9 +504,9 @@ export default function AdoptionModal({
               <input
                 type="text"
                 className={styles.input}
-                value={formData.idadeAnimais}
+                value={formData.idade_animais}
                 onChange={(e) =>
-                  handleInputChange("idadeAnimais", e.target.value)
+                  handleInputChange("idade_animais", e.target.value)
                 }
                 placeholder="Ex: 2 anos, 6 meses..."
               />
@@ -458,9 +516,9 @@ export default function AdoptionModal({
               <label className={styles.label}>Sexo dos animais</label>
               <select
                 className={styles.select}
-                value={formData.sexoAnimais}
+                value={formData.sexo_animais}
                 onChange={(e) =>
-                  handleInputChange("sexoAnimais", e.target.value)
+                  handleInputChange("sexo_animais", e.target.value)
                 }
               >
                 <option value="">Selecione...</option>
@@ -474,9 +532,9 @@ export default function AdoptionModal({
               <label className={styles.label}>Comportamento dos animais</label>
               <textarea
                 className={styles.textarea}
-                value={formData.comportamentoAnimais}
+                value={formData.comportamento_animais}
                 onChange={(e) =>
-                  handleInputChange("comportamentoAnimais", e.target.value)
+                  handleInputChange("comportamento_animais", e.target.value)
                 }
                 placeholder="Descreva o comportamento dos seus animais..."
                 rows={3}
@@ -495,37 +553,34 @@ export default function AdoptionModal({
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="possuiCriancas"
-                checked={formData.possuiCriancas === true}
-                onChange={() => handleInputChange("possuiCriancas", true)}
+                name="possui_criancas"
+                checked={formData.possui_criancas === true}
+                onChange={() => handleInputChange("possui_criancas", true)}
               />
               Sim
             </label>
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="possuiCriancas"
-                checked={formData.possuiCriancas === false}
-                onChange={() => handleInputChange("possuiCriancas", false)}
+                name="possui_criancas"
+                checked={formData.possui_criancas === false}
+                onChange={() => handleInputChange("possui_criancas", false)}
               />
               Não
             </label>
           </div>
         </div>
 
-        {formData.possuiCriancas === true && (
+        {formData.possui_criancas === true && (
           <>
             <div className={styles.field}>
               <label className={styles.label}>Quantidade de crianças</label>
               <input
                 type="number"
                 className={styles.input}
-                value={formData.quantidadeCriancas || ""}
+                value={formData.quantidade_criancas || ""}
                 onChange={(e) =>
-                  handleInputChange(
-                    "quantidadeCriancas",
-                    e.target.value
-                  )
+                  handleInputChange("quantidade_criancas", e.target.value)
                 }
                 min="1"
                 required
@@ -536,9 +591,9 @@ export default function AdoptionModal({
               <label className={styles.label}>Faixa etária das crianças</label>
               <select
                 className={styles.select}
-                value={formData.faixaEtariaCriancas}
+                value={formData.faixa_etaria_criancas}
                 onChange={(e) =>
-                  handleInputChange("faixaEtariaCriancas", e.target.value)
+                  handleInputChange("faixa_etaria_criancas", e.target.value)
                 }
               >
                 <option value="">Selecione...</option>
@@ -559,10 +614,10 @@ export default function AdoptionModal({
                 <label className={styles.radioLabel}>
                   <input
                     type="radio"
-                    name="criancaNecessidadeEspecial"
-                    checked={formData.criancaNecessidadeEspecial === true}
+                    name="crianca_necessidade_especial"
+                    checked={formData.crianca_necessidade_especial === true}
                     onChange={() =>
-                      handleInputChange("criancaNecessidadeEspecial", true)
+                      handleInputChange("crianca_necessidade_especial", true)
                     }
                   />
                   Sim
@@ -570,10 +625,10 @@ export default function AdoptionModal({
                 <label className={styles.radioLabel}>
                   <input
                     type="radio"
-                    name="criancaNecessidadeEspecial"
-                    checked={formData.criancaNecessidadeEspecial === false}
+                    name="crianca_necessidade_especial"
+                    checked={formData.crianca_necessidade_especial === false}
                     onChange={() =>
-                      handleInputChange("criancaNecessidadeEspecial", false)
+                      handleInputChange("crianca_necessidade_especial", false)
                     }
                   />
                   Não
@@ -581,7 +636,7 @@ export default function AdoptionModal({
               </div>
             </div>
 
-            {formData.criancaNecessidadeEspecial === true && (
+            {formData.crianca_necessidade_especial === true && (
               <div className={styles.field}>
                 <label className={styles.label}>
                   Tipo de necessidade especial
@@ -589,9 +644,12 @@ export default function AdoptionModal({
                 <input
                   type="text"
                   className={styles.input}
-                  value={formData.tipoNecessidadeCriancas}
+                  value={formData.tipo_necessidade_criancas}
                   onChange={(e) =>
-                    handleInputChange("tipoNecessidadeCriancas", e.target.value)
+                    handleInputChange(
+                      "tipo_necessidade_criancas",
+                      e.target.value
+                    )
                   }
                   placeholder="Descreva a necessidade especial..."
                 />
@@ -608,14 +666,19 @@ export default function AdoptionModal({
           <label className={styles.label}>Composição familiar</label>
           <textarea
             className={styles.textarea}
-            value={formData.composicaoFamiliar}
+            value={formData.composicao_familiar}
             onChange={(e) =>
-              handleInputChange("composicaoFamiliar", e.target.value)
+              handleInputChange("composicao_familiar", e.target.value)
             }
             placeholder="Descreva quem mora na casa (idades, parentesco, etc.)"
             rows={3}
             required
           />
+          {validationErrors.composicao_familiar && (
+            <span className={styles.error}>
+              {validationErrors.composicao_familiar}
+            </span>
+          )}
         </div>
 
         <div className={styles.field}>
@@ -626,10 +689,10 @@ export default function AdoptionModal({
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="familiarNecessidadeEspecial"
-                checked={formData.familiarNecessidadeEspecial === true}
+                name="familiar_necessidade_especial"
+                checked={formData.familiar_necessidade_especial === true}
                 onChange={() =>
-                  handleInputChange("familiarNecessidadeEspecial", true)
+                  handleInputChange("familiar_necessidade_especial", true)
                 }
               />
               Sim
@@ -637,10 +700,10 @@ export default function AdoptionModal({
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="familiarNecessidadeEspecial"
-                checked={formData.familiarNecessidadeEspecial === false}
+                name="familiar_necessidade_especial"
+                checked={formData.familiar_necessidade_especial === false}
                 onChange={() =>
-                  handleInputChange("familiarNecessidadeEspecial", false)
+                  handleInputChange("familiar_necessidade_especial", false)
                 }
               />
               Não
@@ -648,16 +711,16 @@ export default function AdoptionModal({
           </div>
         </div>
 
-        {formData.familiarNecessidadeEspecial === true && (
+        {formData.familiar_necessidade_especial === true && (
           <div className={styles.field}>
             <label className={styles.label}>Tipo de necessidade especial</label>
             <input
               type="text"
               className={styles.input}
-              value={formData.tipoNecessidadeEspecialFamiliar}
+              value={formData.tipo_necessidade_especial_familiar}
               onChange={(e) =>
                 handleInputChange(
-                  "tipoNecessidadeEspecialFamiliar",
+                  "tipo_necessidade_especial_familiar",
                   e.target.value
                 )
               }
@@ -674,10 +737,10 @@ export default function AdoptionModal({
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="experienciaComAnimais"
-                checked={formData.experienciaComAnimais === true}
+                name="experiencia_com_animais"
+                checked={formData.experiencia_com_animais === true}
                 onChange={() =>
-                  handleInputChange("experienciaComAnimais", true)
+                  handleInputChange("experiencia_com_animais", true)
                 }
               />
               Sim
@@ -685,10 +748,10 @@ export default function AdoptionModal({
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="experienciaComAnimais"
-                checked={formData.experienciaComAnimais === false}
+                name="experiencia_com_animais"
+                checked={formData.experiencia_com_animais === false}
                 onChange={() =>
-                  handleInputChange("experienciaComAnimais", false)
+                  handleInputChange("experiencia_com_animais", false)
                 }
               />
               Não
@@ -708,10 +771,10 @@ export default function AdoptionModal({
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="conhecimentoDespesasAnimais"
-                checked={formData.conhecimentoDespesasAnimais === true}
+                name="conhecimento_despesas_animais"
+                checked={formData.conhecimento_despesas_animais === true}
                 onChange={() =>
-                  handleInputChange("conhecimentoDespesasAnimais", true)
+                  handleInputChange("conhecimento_despesas_animais", true)
                 }
               />
               Sim
@@ -719,10 +782,10 @@ export default function AdoptionModal({
             <label className={styles.radioLabel}>
               <input
                 type="radio"
-                name="conhecimentoDespesasAnimais"
-                checked={formData.conhecimentoDespesasAnimais === false}
+                name="conhecimento_despesas_animais"
+                checked={formData.conhecimento_despesas_animais === false}
                 onChange={() =>
-                  handleInputChange("conhecimentoDespesasAnimais", false)
+                  handleInputChange("conhecimento_despesas_animais", false)
                 }
               />
               Não
@@ -734,9 +797,9 @@ export default function AdoptionModal({
           <label className={styles.label}>Tempo disponível para o animal</label>
           <select
             className={styles.select}
-            value={formData.tempoDisponivel}
+            value={formData.tempo_disponivel}
             onChange={(e) =>
-              handleInputChange("tempoDisponivel", e.target.value)
+              handleInputChange("tempo_disponivel", e.target.value)
             }
             required
           >
@@ -746,6 +809,11 @@ export default function AdoptionModal({
             <option value="periodo-integral">Período integral</option>
             <option value="fins-de-semana">Apenas fins de semana</option>
           </select>
+          {validationErrors.tempo_disponivel && (
+            <span className={styles.error}>
+              {validationErrors.tempo_disponivel}
+            </span>
+          )}
         </div>
       </div>
 

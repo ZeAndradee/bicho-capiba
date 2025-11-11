@@ -1,0 +1,448 @@
+.container {
+  min-height: 100vh;
+  background: var(--background-secondary);
+  position: relative;
+}
+
+.errorBanner {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: 600px;
+  width: 90%;
+}
+
+.pageHeader {
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.title {
+  font-family: var(--title-font);
+  font-size: 2.5rem;
+  color: var(--text-color);
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 2rem;
+}
+
+.tabsContainer {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  background: var(--background);
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--body-font);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: var(--background-secondary);
+  color: var(--text-color);
+}
+
+.activeTab {
+  background: var(--orange-capiba);
+  color: white;
+}
+
+.activeTab:hover {
+  background: var(--orange-capiba);
+  color: white;
+}
+
+.tabContent {
+  animation: fadeIn 0.3s ease;
+}
+
+.formContainer {
+  margin-bottom: 2rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionTitle {
+  font-family: var(--title-font);
+  font-size: 1.5rem;
+  color: var(--text-color);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid var(--orange-capiba);
+}
+
+.card {
+  background: var(--background);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.adoptionCard {
+  background: var(--background);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  margin-bottom: 1.5rem;
+}
+
+.adoptionCardTitle {
+  font-family: var(--title-font);
+  font-size: 1.25rem;
+  color: var(--text-color);
+  margin: 0;
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardContent {
+  padding: 1.5rem;
+}
+
+.helperText {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.inputGroup:last-child {
+  margin-bottom: 0;
+}
+
+.inputRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.inputRow:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.input,
+.textarea {
+  padding: 0.875rem 1rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background: var(--background);
+  font-family: var(--body-font);
+  color: var(--text-color);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--orange-capiba);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #9ca3af;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+.disabledInput {
+  background: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
+
+.input:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #d1d5db;
+  opacity: 0.7;
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.footerActions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.saveButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #9ca3af;
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  font-family: var(--body-font);
+}
+
+.saveButton.hasChanges {
+  background: var(--orange-capiba);
+}
+
+.saveButton.saved {
+  background: var(--green-capiba);
+}
+
+.saveButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.saveButton.hasChanges:hover:not(:disabled) {
+  background: #c23a15;
+}
+
+.saveButton.saved:hover:not(:disabled) {
+  background: #2f5e42;
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resetButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--background);
+  color: var(--text-color);
+  border: 1.5px solid #e5e7eb;
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  font-family: var(--body-font);
+}
+
+.resetButton:hover:not(:disabled) {
+  border-color: var(--text-color);
+  transform: translateY(-1px);
+}
+
+.resetButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  gap: 1rem;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid var(--orange-capiba);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading p {
+  font-size: 1rem;
+  color: var(--text-color);
+  margin: 0;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 1.5rem 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .tabsContainer {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .tab {
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+
+  .adoptionCardTitle {
+    font-size: 1.1rem;
+    padding: 1rem 1rem 0 1rem;
+  }
+
+  .cardContent {
+    padding: 1rem;
+  }
+
+  .inputRow {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .input,
+  .textarea {
+    font-size: 0.9rem;
+  }
+
+  .footer {
+    position: relative;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem 0;
+  }
+
+  .footerActions {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+  }
+
+  .saveButton,
+  .resetButton {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .errorBanner {
+    top: 0.5rem;
+    width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 1rem 0.75rem;
+  }
+
+  .pageHeader {
+    margin-bottom: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .tabsContainer {
+    border-radius: 10px;
+  }
+
+  .tab {
+    font-size: 0.85rem;
+    gap: 0.35rem;
+  }
+
+  .tab svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .card,
+  .adoptionCard {
+    border-radius: 12px;
+  }
+}

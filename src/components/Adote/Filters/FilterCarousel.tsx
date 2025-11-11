@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa6";
 import styles from "./FilterCarousel.module.css";
@@ -17,27 +17,38 @@ const filters = [
     imageAlt: "Cachorro",
   },
   {
-    title: "Equinos",
-    imageSrc: "/images/HorseFilter.png",
-    imageAlt: "Cavalo",
+    title: "Coelhos",
+    imageSrc: "/images/RabbitFilter.png",
+    imageAlt: "Coelho",
   },
   {
     title: "Roedores",
     imageSrc: "/images/RatFilter.png",
     imageAlt: "Rato",
   },
-  {
-    title: "Répteis",
-    imageSrc: "/images/SnakeFilter.png",
-    imageAlt: "Cobra",
-    width: "120px",
-  },
 ];
 
 export default function FilterCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [cardsPerView, setCardsPerView] = useState(3);
 
-  const cardsPerView = 3;
+  useEffect(() => {
+    const updateCardsPerView = () => {
+      const width = window.innerWidth;
+      if (width <= 640) {
+        setCardsPerView(1);
+      } else if (width <= 968) {
+        setCardsPerView(2);
+      } else {
+        setCardsPerView(3);
+      }
+    };
+
+    updateCardsPerView();
+    window.addEventListener("resize", updateCardsPerView);
+    return () => window.removeEventListener("resize", updateCardsPerView);
+  }, []);
+
   const maxIndex = Math.max(0, filters.length - cardsPerView);
 
   const nextSlide = () => {
@@ -48,6 +59,12 @@ export default function FilterCarousel() {
     setCurrentIndex((prev) => Math.max(prev - 1, 0));
   };
 
+  const getTranslatePercentage = () => {
+    if (cardsPerView === 1) return 100;
+    if (cardsPerView === 2) return 50;
+    return 33.33;
+  };
+
   return (
     <div className={styles.carousel}>
       <button
@@ -55,6 +72,7 @@ export default function FilterCarousel() {
         onClick={prevSlide}
         aria-label="Filtro anterior"
         style={{ opacity: currentIndex === 0 ? 0.3 : 1 }}
+        disabled={currentIndex === 0}
       >
         <FaArrowLeft size={25} />
       </button>
@@ -63,7 +81,9 @@ export default function FilterCarousel() {
         <div
           className={styles.cardsWrapper}
           style={{
-            transform: `translateX(-${currentIndex * 30.3}%)`,
+            transform: `translateX(-${
+              currentIndex * getTranslatePercentage()
+            }%)`,
           }}
         >
           {filters.map((filter, index) => (
@@ -74,9 +94,6 @@ export default function FilterCarousel() {
                   alt={filter.imageAlt}
                   width={150}
                   height={150}
-                  style={{
-                    width: filter.width ? filter.width : "auto",
-                  }}
                   className={styles.image}
                 />
                 <h3 className={styles.title}>{filter.title}</h3>
@@ -91,6 +108,7 @@ export default function FilterCarousel() {
         onClick={nextSlide}
         aria-label="Próximo filtro"
         style={{ opacity: currentIndex === maxIndex ? 0.3 : 1 }}
+        disabled={currentIndex === maxIndex}
       >
         <FaArrowRight size={25} />
       </button>
