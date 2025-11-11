@@ -14,14 +14,6 @@ const createApiInstance = () => {
   instance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      if (error.response?.status === 401) {
-        if (typeof window !== 'undefined') {
-          const currentPath = window.location.pathname;
-          if (currentPath !== '/entrar' && currentPath !== '/cadastrar' && currentPath !== '/') {
-            window.location.href = '/entrar';
-          }
-        }
-      }
       return Promise.reject(error);
     }
   );

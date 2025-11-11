@@ -65,18 +65,6 @@ export default function AdoptionStatusModal({
     }
   };
 
-  const getStatusStep = (status: string) => {
-    switch (status) {
-      case "pendente":
-        return 1;
-      case "aprovado":
-        return 3;
-      case "rejeitado":
-        return 1;
-      default:
-        return 0;
-    }
-  };
 
   const getNextStepsContent = (status: string) => {
     const getStatusClass = () => {

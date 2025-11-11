@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import AnimalCard from "@/components/UI/AnimalsCard/AnimalCard";
-import { formatAge, getAgeInYears } from "@/utils/formatters";
+import { formatAge } from "@/utils/formatters";
 import Filter, { FilterOption } from "@/components/UI/Filter/Filter";
 import CloseAnimalsFeedSkeleton from "@/components/UI/Skeletons/CloseAnimalsFeedSkeleton";
 import AnimalCardSkeleton from "@/components/UI/Skeletons/AnimalCardSkeleton";

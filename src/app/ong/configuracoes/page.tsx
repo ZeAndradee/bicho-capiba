@@ -35,7 +35,7 @@ interface OngFormData extends Partial<AuthUser> {
 }
 
 export default function DashboardSettings() {
-  const { user, isLoading, setUser } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<OngFormData>({});

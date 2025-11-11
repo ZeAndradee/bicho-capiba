@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -35,7 +35,7 @@ const steps = [
 
 export default function OngSignupPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const { signupOng, isLoading, isAuthenticated } = useAuth();
+  const { signupOng, isLoading } = useAuth();
   const router = useRouter();
   const [formData, setFormData] = useState<OngSignupFormData>({
     name: "",

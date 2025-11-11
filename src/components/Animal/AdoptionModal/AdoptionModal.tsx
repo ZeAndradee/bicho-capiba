@@ -57,7 +57,7 @@ export default function AdoptionModal({
   onClose,
   animal,
 }: AdoptionModalProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<
     "auth" | "explanation" | "form" | "success"

@@ -20,14 +20,14 @@ export default function AnimalsGrid({
 
   const filteredAnimals = animals.filter((animal) => {
     if (filter === "todos") return true;
-    return animal.status.toLowerCase() === filter.toLowerCase();
+    return animal.statusAnimal.toLowerCase() === filter.toLowerCase();
   });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Disponível":
+      case "Disponivel":
         return "available";
-      case "Em andamento":
+      case "Pendente":
         return "process";
       case "Adotado":
         return "adopted";
@@ -59,21 +59,21 @@ export default function AnimalsGrid({
           </button>
           <button
             className={`${styles.filterButton} ${
-              filter === "disponível" ? styles.active : ""
+              filter === "disponivel" ? styles.active : ""
             }`}
-            onClick={() => setFilter("disponível")}
+            onClick={() => setFilter("disponivel")}
           >
             Disponíveis (
-            {animals.filter((a) => a.status === "Disponível").length})
+            {animals.filter((a) => a.statusAnimal === "Disponivel").length})
           </button>
           <button
             className={`${styles.filterButton} ${
-              filter === "Em andamento" ? styles.active : ""
+              filter === "pendente" ? styles.active : ""
             }`}
-            onClick={() => setFilter("Em andamento")}
+            onClick={() => setFilter("pendente")}
           >
-            Em andamento (
-            {animals.filter((a) => a.status === "Em andamento").length})
+            Pendentes (
+            {animals.filter((a) => a.statusAnimal === "Pendente").length})
           </button>
           <button
             className={`${styles.filterButton} ${
@@ -81,7 +81,7 @@ export default function AnimalsGrid({
             }`}
             onClick={() => setFilter("adotado")}
           >
-            Adotados ({animals.filter((a) => a.status === "Adotado").length})
+            Adotados ({animals.filter((a) => a.statusAnimal === "Adotado").length})
           </button>
         </div>
 
@@ -100,69 +100,72 @@ export default function AnimalsGrid({
         </div>
       ) : (
         <div className={styles.grid}>
-          {filteredAnimals.map((animal) => (
-            <div key={animal.id} className={styles.card}>
-              <div className={styles.imageContainer}>
-                <ImageWithFallback
-                  src={animal.images?.[0]?.url || ""}
-                  alt={animal.nome}
-                  className={styles.image}
-                  fill
-                  sizes="(max-width: 300px)"
-                />
-                <div
-                  className={`${styles.status} ${
-                    styles[getStatusColor(animal.status)]
-                  }`}
-                >
-                  {animal.status}
-                </div>
-              </div>
-
-              <div className={styles.content}>
-                <h3 className={styles.name}>{animal.nome}</h3>
-                <div className={styles.details}>
-                  <span>{animal.sexo === "M" ? "Macho" : "Fêmea"}</span>
-                  <span>•</span>
-                  <span>{animal.idade} anos</span>
-                  <span>•</span>
-                  <span>{animal.raca}</span>
+          {filteredAnimals.map((animal) => {
+            const age = new Date().getFullYear() - new Date(animal.dataNascimento).getFullYear();
+            return (
+              <div key={animal.uuid} className={styles.card}>
+                <div className={styles.imageContainer}>
+                  <ImageWithFallback
+                    src={animal.fotos?.[0]?.url || ""}
+                    alt={animal.nome}
+                    className={styles.image}
+                    fill
+                    sizes="(max-width: 300px)"
+                  />
+                  <div
+                    className={`${styles.status} ${
+                      styles[getStatusColor(animal.statusAnimal)]
+                    }`}
+                  >
+                    {animal.statusAnimal === "Disponivel" ? "Disponível" : animal.statusAnimal}
+                  </div>
                 </div>
 
-                <div className={styles.actions}>
-                  <Link
-                    href={`/adote/${animal.id}`}
-                    className={styles.viewButton}
-                    title="Ver perfil público"
-                  >
-                    <Eye size={16} />
-                  </Link>
-                  <Link
-                    href={`/ong/dashboard/animal/${animal.id}/editar`}
-                    className={styles.editButton}
-                    title="Editar animal"
-                  >
-                    <Edit size={16} />
-                  </Link>
-                  <button
-                    className={styles.deleteButton}
-                    title="Remover animal"
-                    onClick={() => {
-                      if (
-                        confirm(
-                          `Tem certeza que deseja remover ${animal.nome}?`
-                        )
-                      ) {
-                        console.log("Delete animal:", animal.id);
-                      }
-                    }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                <div className={styles.content}>
+                  <h3 className={styles.name}>{animal.nome}</h3>
+                  <div className={styles.details}>
+                    <span>{animal.sexo === "M" ? "Macho" : "Fêmea"}</span>
+                    <span>•</span>
+                    <span>{age} anos</span>
+                    <span>•</span>
+                    <span>{animal.porte}</span>
+                  </div>
+
+                  <div className={styles.actions}>
+                    <Link
+                      href={`/adote/${animal.uuid}`}
+                      className={styles.viewButton}
+                      title="Ver perfil público"
+                    >
+                      <Eye size={16} />
+                    </Link>
+                    <Link
+                      href={`/ong/dashboard/animal/${animal.uuid}/editar`}
+                      className={styles.editButton}
+                      title="Editar animal"
+                    >
+                      <Edit size={16} />
+                    </Link>
+                    <button
+                      className={styles.deleteButton}
+                      title="Remover animal"
+                      onClick={() => {
+                        if (
+                          confirm(
+                            `Tem certeza que deseja remover ${animal.nome}?`
+                          )
+                        ) {
+                          console.log("Delete animal:", animal.uuid);
+                        }
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

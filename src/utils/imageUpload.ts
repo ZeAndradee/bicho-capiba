@@ -87,7 +87,7 @@ export const handleImageSelection = async (
         file,
       },
     };
-  } catch (error) {
+  } catch {
     return {
       success: false,
       error: {
@@ -135,7 +135,7 @@ export const handleMultipleImageSelection = async (
         preview,
         file,
       });
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: {

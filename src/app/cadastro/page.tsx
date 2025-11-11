@@ -16,7 +16,7 @@ import { formatUrlParam } from "@/utils/formatters";
 import styles from "./page.module.css";
 
 function SignupForm() {
-  const { signup, isLoading, isAuthenticated } = useAuth();
+  const { signup, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect");

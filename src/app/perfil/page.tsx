@@ -23,7 +23,7 @@ import {
   AdoptionProcess,
   UserDonation,
 } from "@/services/User/User";
-import { unlikeAnimal, likeAnimal } from "@/services/Animals/Animal";
+import { unlikeAnimal } from "@/services/Animals/Animal";
 import AdoptionStatusModal from "./AdoptionStatusModal/AdoptionStatusModal";
 import styles from "./page.module.css";
 

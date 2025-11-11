@@ -18,7 +18,7 @@ function LoginForm() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<ErrorState | null>(null);
-  const { login, logout, isLoading, isAuthenticated } = useAuth();
+  const { login, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect");

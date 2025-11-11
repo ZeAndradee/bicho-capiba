@@ -3,25 +3,22 @@ import { getApiInstance } from "@/hooks/Api";
 const api = getApiInstance();
 
 export interface OngAnimal {
-  id: string;
+  uuid: string;
   nome: string;
-  idade: number;
   sexo: "M" | "F";
-  porte?: "Pequeno" | "Medio" | "Grande";
-  cor: string;
-  especie: string;
-  raca: string;
-  data_nascimento?: string;
-  vacinas?: string;
-  castrado?: boolean;
-  necessidades_especiais?: string;
-  historia?: string;
-  sociavel_animal?: boolean;
-  sociavel_pessoa?: boolean;
-  images?: Array<{ id: string; url: string }>;
-  status: "Disponível" | "Em processo" | "Em andamento" | "Adotado";
+  porte: "Pequeno" | "Medio" | "Grande";
+  dataNascimento: string;
+  castrado: number | null;
+  necessidadesEspeciais: string | null;
+  historia: string;
+  statusAnimal: "Disponivel" | "Pendente" | "Adotado";
+  sociavelAnimal: number;
+  sociavelPessoa: number;
   createdAt: string;
   updatedAt: string;
+  deletedAt: string | null;
+  fotos: Array<{ url: string }>;
+  isLiked: boolean;
 }
 
 export interface OngStats {
@@ -32,10 +29,9 @@ export interface OngStats {
 }
 
 export interface OngAnimalsResponse {
-  animals: OngAnimal[];
-  adoptedThisMonth?: number;
-  totalDonations?: number;
-  activeAdoptions?: number;
+  status: string;
+  result: OngAnimal[];
+  error: string | null;
 }
 
 export interface OngProfile {
@@ -69,7 +65,7 @@ export const fetchOngAnimals = async (): Promise<OngAnimalsResponse> => {
 
 export const fetchOngStats = async (): Promise<OngStats> => {
   try {
-    const response = await api.get("/ongs/stats");
+    const response = await api.get("/stats");
     return response.data;
   } catch (error) {
     console.error("Error fetching ONG stats:", error);
@@ -79,7 +75,7 @@ export const fetchOngStats = async (): Promise<OngStats> => {
 
 export const fetchOngProfile = async (): Promise<OngProfile> => {
   try {
-    const response = await api.get("/ongs/profile");
+    const response = await api.get("/profile");
     return response.data;
   } catch (error) {
     console.error("Error fetching ONG profile:", error);
@@ -97,11 +93,13 @@ export const updateOngProfile = async (data: object) => {
   }
 };
 
-export const createAnimal = async (animalData: FormData): Promise<OngAnimal> => {
+export const createAnimal = async (
+  animalData: FormData
+): Promise<OngAnimal> => {
   try {
-    const response = await api.post("/ongs/animals", animalData, {
+    const response = await api.post("/animals", animalData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data;

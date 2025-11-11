@@ -9,9 +9,7 @@ import UserImage from "../UserImage/UserImage";
 import {
   User,
   Settings,
-  Heart,
   LogOut,
-  Building2,
   BarChart3,
 } from "lucide-react";
 import styles from "./Header.module.css";
@@ -280,7 +278,7 @@ export default function Header() {
                     </Link>
                   )}
                   <Link
-                    href="/configuracoes"
+                    href={isOng ? "/ong/configuracoes" : "/perfil/configuracoes"}
                     className={`${styles.mobileNavLink} ${styles.mobileUserLink}`}
                     onClick={() => {
                       setIsMenuOpen(false);

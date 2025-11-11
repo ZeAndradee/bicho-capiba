@@ -1,12 +1,12 @@
 interface AnimalFormData {
   nome: string;
   sexo: string;
-  porte: string;
+  porte?: string;
   cor: string;
   especie: string;
   raca: string;
-  data_nascimento: string;
-  vacinas?: string;
+  data_nascimento?: string;
+  vacinas?: string[];
   castrado?: boolean;
   necessidades_especiais?: string;
   historia?: string;
@@ -24,8 +24,8 @@ export const validateAnimalForm = (
     errors.nome = "Nome é obrigatório";
   } else if (formData.nome.trim().length < 1) {
     errors.nome = "Nome deve ter pelo menos 1 caractere";
-  } else if (formData.nome.trim().length > 30) {
-    errors.nome = "Nome deve ter no máximo 30 caracteres";
+  } else if (formData.nome.trim().length > 100) {
+    errors.nome = "Nome deve ter no máximo 100 caracteres";
   }
 
   if (!formData.sexo) {
@@ -34,9 +34,7 @@ export const validateAnimalForm = (
     errors.sexo = "Sexo deve ser M (Macho) ou F (Fêmea)";
   }
 
-  if (!formData.porte) {
-    errors.porte = "Porte é obrigatório";
-  } else if (!["Pequeno", "Medio", "Grande"].includes(formData.porte)) {
+  if (formData.porte && !["Pequeno", "Medio", "Grande"].includes(formData.porte)) {
     errors.porte = "Porte deve ser Pequeno, Medio ou Grande";
   }
 
@@ -58,21 +56,15 @@ export const validateAnimalForm = (
     errors.raca = "Raça deve ter no máximo 50 caracteres";
   }
 
-  if (!formData.data_nascimento) {
-    errors.data_nascimento = "Data de nascimento é obrigatória";
-  } else if (formData.data_nascimento.length > 10) {
+  if (formData.data_nascimento && formData.data_nascimento.length > 10) {
     errors.data_nascimento =
       "Data de nascimento deve ter no máximo 10 caracteres";
-  } else {
+  } else if (formData.data_nascimento) {
     const birthDate = new Date(formData.data_nascimento);
     const today = new Date();
     if (birthDate > today) {
       errors.data_nascimento = "Data de nascimento não pode ser no futuro";
     }
-  }
-
-  if (formData.vacinas && formData.vacinas.length > 200) {
-    errors.vacinas = "Vacinas deve ter no máximo 200 caracteres";
   }
 
   if (

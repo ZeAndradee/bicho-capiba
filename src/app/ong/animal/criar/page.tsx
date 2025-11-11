@@ -13,12 +13,11 @@ import {
 } from "@/utils/imageUpload";
 import { formatAge } from "@/utils/formatters";
 import { sexoData, porteOptions } from "@/data/animalData";
-import { FaDog, FaCat, FaHorse, FaFeather, FaCarrot } from "react-icons/fa6";
+import { FaDog, FaCat, FaHorse, FaCarrot } from "react-icons/fa6";
 import { FaMars, FaVenus } from "react-icons/fa";
 import { FaBirthdayCake } from "react-icons/fa";
 import Filter from "@/components/UI/Filter/Filter";
 import {
-  Save,
   ArrowLeft,
   Camera,
   X,
@@ -31,18 +30,6 @@ import {
   Info,
   Palette,
   Eye,
-  MapPin,
-  Ruler,
-  Syringe,
-  Heart,
-  FileText,
-  ImageIcon,
-  Dog,
-  Cat,
-  Bird,
-  Rabbit,
-  Calendar,
-  Shapes,
 } from "lucide-react";
 import Error from "@/components/UI/Error/Error";
 import AnimalCard from "@/components/UI/AnimalsCard/AnimalCard";
@@ -96,14 +83,16 @@ interface ImagePreview {
 
 interface AnimalData {
   especies: Array<{
+    uuid: string;
     nome: string;
-    racas: Array<{ nome: string }>;
+    racas: Array<{ uuid: string; nome: string }>;
   }>;
   cores: Array<{
+    uuid: string;
     nome: string;
     hexadecimal: string;
   }>;
-  vacinas: Array<{ nome: string }>;
+  vacinas: Array<{ uuid: string; nome: string }>;
 }
 
 export default function CreateAnimal() {
@@ -124,7 +113,7 @@ export default function CreateAnimal() {
     };
 
     return animalData.especies.map((especie) => ({
-      value: especie.nome,
+      value: especie.uuid,
       label: especie.nome,
       icon: speciesIcons[especie.nome] || <FaDog />,
     }));
@@ -142,7 +131,7 @@ export default function CreateAnimal() {
     if (!animalData) return [];
 
     return animalData.cores.map((cor) => ({
-      value: cor.nome,
+      value: cor.uuid,
       label: cor.nome,
       icon: (
         <div
@@ -158,14 +147,14 @@ export default function CreateAnimal() {
     }));
   };
 
-  const getRacasOptions = (especieNome: string) => {
+  const getRacasOptions = (especieId: string) => {
     if (!animalData) return [];
 
-    const especie = animalData.especies.find((e) => e.nome === especieNome);
+    const especie = animalData.especies.find((e) => e.uuid === especieId);
     if (!especie) return [];
 
     return especie.racas.map((raca) => ({
-      value: raca.nome,
+      value: raca.uuid,
       label: raca.nome,
     }));
   };
@@ -173,10 +162,43 @@ export default function CreateAnimal() {
   const getVacinasOptions = () => {
     if (!animalData) return [];
 
-    const uniqueVacinas = Array.from(
-      new Set(animalData.vacinas.map((v) => v.nome))
-    );
-    return uniqueVacinas;
+    const uniqueVacinas = new Map();
+    animalData.vacinas.forEach((v) => {
+      if (!uniqueVacinas.has(v.nome)) {
+        uniqueVacinas.set(v.nome, { id: v.uuid, nome: v.nome });
+      }
+    });
+    return Array.from(uniqueVacinas.values());
+  };
+
+  const getVacinaNamesByIds = (vacinaIds: string[]) => {
+    if (!animalData || !vacinaIds.length) return [];
+
+    return vacinaIds.map(id => {
+      const vacina = animalData.vacinas.find(v => v.uuid === id);
+      return vacina ? vacina.nome : '';
+    }).filter(Boolean);
+  };
+
+  const getEspecieNameById = (especieId: string) => {
+    if (!animalData) return '';
+    const especie = animalData.especies.find(e => e.uuid === especieId);
+    return especie ? especie.nome : '';
+  };
+
+  const getRacaNameById = (racaId: string) => {
+    if (!animalData) return '';
+    for (const especie of animalData.especies) {
+      const raca = especie.racas.find(r => r.uuid === racaId);
+      if (raca) return raca.nome;
+    }
+    return '';
+  };
+
+  const getCorNameById = (corId: string) => {
+    if (!animalData) return '';
+    const cor = animalData.cores.find(c => c.uuid === corId);
+    return cor ? cor.nome : '';
   };
   const [currentStep, setCurrentStep] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
@@ -201,7 +223,7 @@ export default function CreateAnimal() {
     especie: string;
     raca: string;
     data_nascimento: string;
-    vacinas: string;
+    vacinas: string[];
     castrado: boolean;
     necessidades_especiais: string;
     historia: string;
@@ -216,7 +238,7 @@ export default function CreateAnimal() {
     especie: "",
     raca: "",
     data_nascimento: "",
-    vacinas: "",
+    vacinas: [],
     castrado: false,
     necessidades_especiais: "",
     historia: "",
@@ -263,7 +285,7 @@ export default function CreateAnimal() {
       setFormData((prev) => ({
         ...prev,
         raca: "",
-        vacinas: "",
+        vacinas: [],
       }));
       setSelectedVacinas([]);
       setIsVacinado(null);
@@ -308,12 +330,12 @@ export default function CreateAnimal() {
       setSelectedVacinas([]);
       setFormData((prev) => ({
         ...prev,
-        vacinas: "Não vacinado",
+        vacinas: [],
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
-        vacinas: "",
+        vacinas: [],
       }));
     }
   };
@@ -326,7 +348,7 @@ export default function CreateAnimal() {
 
       setFormData((prevFormData) => ({
         ...prevFormData,
-        vacinas: newVacinas.join(", "),
+        vacinas: newVacinas,
       }));
 
       return newVacinas;
@@ -521,7 +543,11 @@ export default function CreateAnimal() {
           (finalFormData as Record<string, unknown>)[key] !== null
         ) {
           const value = (finalFormData as Record<string, unknown>)[key];
-          if (typeof value === "boolean") {
+          if (Array.isArray(value)) {
+            value.forEach((item) => {
+              multipartData.append(key, item);
+            });
+          } else if (typeof value === "boolean") {
             multipartData.append(key, value.toString());
           } else if (typeof value === "number") {
             multipartData.append(key, value.toString());
@@ -619,15 +645,15 @@ export default function CreateAnimal() {
       id: "preview",
       nome: formData.nome || "Nome do animal",
       image: firstImage,
-      sexo: (formData.sexo === "Macho"
+      sexo: (formData.sexo === "M"
         ? "M"
-        : formData.sexo === "Fêmea"
+        : formData.sexo === "F"
         ? "F"
         : "M") as "M" | "F",
       idade: formData.data_nascimento ? formatAge(formData.data_nascimento) : "Idade não informada",
       raca: {
         id: 0,
-        nome: (showCustomRaca ? customRaca : formData.raca) || "Raça",
+        nome: showCustomRaca ? customRaca : (formData.raca ? getRacaNameById(formData.raca) : "Raça"),
         especieId: 0,
       },
       distancia: "0km",
@@ -967,17 +993,17 @@ export default function CreateAnimal() {
                           <div className={styles.vacinasGrid}>
                             {availableVacinas.map((vacina) => (
                               <label
-                                key={vacina}
+                                key={vacina.id}
                                 className={styles.vacinaOption}
                               >
                                 <input
                                   type="checkbox"
-                                  checked={selectedVacinas.includes(vacina)}
-                                  onChange={() => handleVacinaToggle(vacina)}
+                                  checked={selectedVacinas.includes(vacina.id)}
+                                  onChange={() => handleVacinaToggle(vacina.id)}
                                   className={styles.checkbox}
                                 />
                                 <span className={styles.vacinaText}>
-                                  {vacina}
+                                  {vacina.nome}
                                 </span>
                               </label>
                             ))}
@@ -1174,39 +1200,19 @@ export default function CreateAnimal() {
                         </h4>
                         <div className={styles.reviewSummary}>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Info size={18} /> Nome:
-                            </strong>{" "}
+                            <strong>Nome:</strong>{" "}
                             {formData.nome || "Não informado"}
                           </div>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              {formData.especie === "Cachorros" ? (
-                                <Dog size={18} />
-                              ) : formData.especie === "Gatos" ? (
-                                <Cat size={18} />
-                              ) : formData.especie === "Roedores" ? (
-                                <Rabbit size={18} />
-                              ) : formData.especie === "Cobras" ? (
-                                <Bird size={18} />
-                              ) : (
-                                <Info size={18} />
-                              )}{" "}
-                              Espécie:
-                            </strong>{" "}
-                            {formData.especie || "Não informado"}
+                            <strong>Espécie:</strong>{" "}
+                            {formData.especie ? getEspecieNameById(formData.especie) : "Não informado"}
                           </div>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Shapes size={18} /> Raça:
-                            </strong>{" "}
-                            {(showCustomRaca ? customRaca : formData.raca) ||
-                              "Não informado"}
+                            <strong>Raça:</strong>{" "}
+                            {showCustomRaca ? customRaca : (formData.raca ? getRacaNameById(formData.raca) : "Não informado")}
                           </div>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Info size={18} /> Sexo:
-                            </strong>{" "}
+                            <strong>Sexo:</strong>{" "}
                             {formData.sexo || "Não informado"}
                           </div>
                         </div>
@@ -1218,24 +1224,17 @@ export default function CreateAnimal() {
                         </h4>
                         <div className={styles.reviewSummary}>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Calendar size={18} /> Idade:
-                            </strong>{" "}
+                            <strong>Idade:</strong>{" "}
                             {formData.data_nascimento
                               ? formatAge(formData.data_nascimento)
                               : "Não informado"}
                           </div>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Palette size={18} /> Cor:
-                            </strong>{" "}
-                            {(showCustomCor ? customCor : formData.cor) ||
-                              "Não informado"}
+                            <strong>Cor:</strong>{" "}
+                            {showCustomCor ? customCor : (formData.cor ? getCorNameById(formData.cor) : "Não informado")}
                           </div>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Ruler size={18} /> Porte:
-                            </strong>{" "}
+                            <strong>Porte:</strong>{" "}
                             {formData.porte || "Não informado"}
                           </div>
                         </div>
@@ -1247,9 +1246,7 @@ export default function CreateAnimal() {
                         </h4>
                         <div className={styles.reviewSummary}>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Shield size={18} /> Castrado:
-                            </strong>{" "}
+                            <strong>Castrado:</strong>{" "}
                             {formData.castrado === true
                               ? "Sim"
                               : formData.castrado === false
@@ -1257,16 +1254,12 @@ export default function CreateAnimal() {
                               : "Não informado"}
                           </div>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Syringe size={18} /> Vacinas:
-                            </strong>{" "}
-                            {formData.vacinas || "Nenhuma selecionada"}
+                            <strong>Vacinas:</strong>{" "}
+                            {Array.isArray(formData.vacinas) ? (formData.vacinas.length > 0 ? getVacinaNamesByIds(formData.vacinas).join(", ") : "Nenhuma selecionada") : "Nenhuma selecionada"}
                           </div>
                           {formData.necessidades_especiais && (
                             <div className={styles.summaryItem}>
-                              <strong>
-                                <Heart size={18} /> Necessidades Especiais:
-                              </strong>{" "}
+                              <strong>Necessidades Especiais:</strong>{" "}
                               {formData.necessidades_especiais}
                             </div>
                           )}
@@ -1279,22 +1272,16 @@ export default function CreateAnimal() {
                         </h4>
                         <div className={styles.reviewSummary}>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Heart size={18} /> Sociável com animais:
-                            </strong>{" "}
+                            <strong>Sociável com animais:</strong>{" "}
                             {formData.sociavel_animal ? "Sim" : "Não"}
                           </div>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <Users size={18} /> Sociável com pessoas:
-                            </strong>{" "}
+                            <strong>Sociável com pessoas:</strong>{" "}
                             {formData.sociavel_pessoa ? "Sim" : "Não"}
                           </div>
                           {formData.historia && (
                             <div className={styles.summaryItem}>
-                              <strong>
-                                <FileText size={18} /> História:
-                              </strong>{" "}
+                              <strong>História:</strong>{" "}
                               {formData.historia}
                             </div>
                           )}
@@ -1307,16 +1294,12 @@ export default function CreateAnimal() {
                         </h4>
                         <div className={styles.reviewSummary}>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <ImageIcon size={18} /> Fotos:
-                            </strong>{" "}
+                            <strong>Fotos:</strong>{" "}
                             {imagePreviews.length}{" "}
                             {imagePreviews.length === 1 ? "imagem" : "imagens"}
                           </div>
                           <div className={styles.summaryItem}>
-                            <strong>
-                              <MapPin size={18} /> Localização:
-                            </strong>{" "}
+                            <strong>Localização:</strong>{" "}
                             {user && user.bairro && user.cidade
                               ? `${user.bairro}, ${user.cidade}`
                               : "Não informado"}

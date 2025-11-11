@@ -23,7 +23,6 @@ type TabType = "personal" | "address" | "adoption";
 
 export default function UserSettings() {
   const { user, isLoading } = useAuth();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("personal");
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<{
