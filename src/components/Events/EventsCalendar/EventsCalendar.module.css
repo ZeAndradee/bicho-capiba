@@ -1,0 +1,157 @@
+.wrapper {
+  flex-shrink: 0;
+  width: min(680px, 52vw);
+  perspective: 1600px;
+  padding: 1.5rem 0;
+  pointer-events: none;
+}
+
+.calendar {
+  transform: rotateX(14deg) rotateY(-22deg) rotateZ(4deg);
+  transform-origin: left center;
+  -webkit-mask-image: linear-gradient(
+      to right,
+      #000 0%,
+      #000 72%,
+      transparent 100%
+    ),
+    linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, #000 0%, #000 72%, transparent 100%),
+    linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+  mask-composite: intersect;
+  animation: fadeIn 0.35s ease-out both;
+}
+
+.month {
+  margin: 0 0 14px 12px;
+  font-family: var(--title-font);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--foreground);
+  text-transform: capitalize;
+}
+
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.grid {
+  border-left: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
+}
+
+.weekday {
+  padding: 0 12px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 84px;
+  padding: 10px 6px;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.day {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.today .day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.chip {
+  position: relative;
+  max-width: 100%;
+  padding: 4px 6px 4px 14px;
+  border-radius: 6px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  animation: fadeIn 0.2s ease-out both;
+}
+
+.chip::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.castracao {
+  --accent: var(--orange-capiba);
+}
+
+.vacinacao {
+  --accent: var(--green-capiba);
+}
+
+.adocao {
+  --accent: var(--yellow-capiba);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar,
+  .chip {
+    animation: none;
+  }
+}
+
+@media (max-width: 968px) {
+  .wrapper {
+    width: 380px;
+  }
+
+  .cell {
+    min-height: 60px;
+  }
+
+  .chip {
+    padding: 3px 6px 3px 6px;
+    font-size: 0;
+    width: 100%;
+    height: 8px;
+  }
+
+  .chip::before {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .wrapper {
+    display: none;
+  }
+}

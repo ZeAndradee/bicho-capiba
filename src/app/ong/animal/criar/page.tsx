@@ -18,7 +18,6 @@ import { FaMars, FaVenus } from "react-icons/fa";
 import { FaBirthdayCake } from "react-icons/fa";
 import Filter from "@/components/UI/Filter/Filter";
 import {
-  ArrowLeft,
   Camera,
   X,
   Plus,
@@ -32,6 +31,7 @@ import {
   Eye,
 } from "lucide-react";
 import Error from "@/components/UI/Error/Error";
+import Breadcrumb from "@/components/UI/Breadcrumb/Breadcrumb";
 import AnimalCard from "@/components/UI/AnimalsCard/AnimalCard";
 import ImageCrop from "@/components/UI/ImageCrop/ImageCrop";
 import styles from "./page.module.css";
@@ -575,10 +575,6 @@ export default function CreateAnimal() {
     }
   };
 
-  const handleGoBack = () => {
-    router.push("/ong/dashboard");
-  };
-
   const nextStep = () => {
     if (currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1);
@@ -731,10 +727,12 @@ export default function CreateAnimal() {
 
       <main className={styles.main}>
         <div className={styles.header}>
-          <button onClick={handleGoBack} className={styles.backButton}>
-            <ArrowLeft size={20} />
-            Voltar
-          </button>
+          <Breadcrumb
+            items={[
+              { label: "Dashboard", href: "/ong/dashboard" },
+              { label: "Novo animal" },
+            ]}
+          />
         </div>
 
         {renderStepIndicator()}

@@ -1,0 +1,60 @@
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 4.5rem;
+}
+
+.titlePaw {
+  color: var(--yellow-capiba);
+  transform: rotate(20deg);
+}
+
+.sectionTitle {
+  font-family: var(--title-font);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--foreground);
+}
+
+.pastSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pastGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.skeletonHeader {
+  width: 260px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--skeleton-base);
+}
+
+.skeletonRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 968px) {
+  .skeletonRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skeletonRow > :nth-child(n + 2) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .pastGrid {
+    grid-template-columns: 1fr;
+  }
+}

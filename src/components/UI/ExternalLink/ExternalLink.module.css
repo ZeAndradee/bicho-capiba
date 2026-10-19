@@ -1,0 +1,234 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(23, 23, 23, 0.5);
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem 1.75rem 1.5rem;
+  border-radius: 24px;
+  background: var(--background);
+  text-align: center;
+  animation: popIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.closeButton:hover {
+  background: var(--background-secondary);
+}
+
+.paws {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 56px;
+  margin-bottom: 1rem;
+}
+
+.paw {
+  color: var(--orange-capiba);
+  opacity: 0;
+  animation: pawStep 0.35s ease-out both;
+}
+
+.paw:nth-child(odd) {
+  rotate: 42deg;
+}
+
+.paw:nth-child(even) {
+  rotate: 26deg;
+}
+
+.paw:nth-child(1) {
+  translate: 0 17px;
+}
+
+.paw:nth-child(2) {
+  translate: 0 -2px;
+}
+
+.paw:nth-child(3) {
+  translate: 0 7px;
+}
+
+.paw:nth-child(4) {
+  translate: 0 -12px;
+}
+
+.paw:nth-child(5) {
+  translate: 0 -3px;
+}
+
+.title {
+  font-family: var(--title-font);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+
+.description {
+  margin-top: 0.5rem;
+  color: var(--text-color);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+.host {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  margin-top: 1rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--background-secondary);
+  color: var(--text-color);
+  font-size: 0.8rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.host svg {
+  flex-shrink: 0;
+  color: var(--orange-capiba);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.stayButton,
+.continueButton {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    filter 0.2s ease,
+    color 0.2s ease;
+}
+
+.stayButton {
+  border: 1px solid var(--border-color);
+  background: var(--background);
+  color: var(--text-color);
+}
+
+.stayButton:hover {
+  background: var(--background-secondary);
+  color: var(--foreground);
+}
+
+.continueButton {
+  border: none;
+  background: var(--orange-capiba);
+  color: white;
+}
+
+.continueButton:hover {
+  filter: brightness(0.93);
+}
+
+.continueIcon {
+  transition: transform 0.25s ease;
+}
+
+.continueButton:hover .continueIcon {
+  transform: translate(2px, -2px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pawStep {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .modal,
+  .paw {
+    animation: none;
+  }
+
+  .paw {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 1.75rem 1.25rem 1.25rem;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+}

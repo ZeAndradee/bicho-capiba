@@ -1,0 +1,108 @@
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.6rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--background);
+  color: var(--text-color);
+  font-family: var(--body-font);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    color 0.2s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.option:hover {
+  border-color: var(--yellow-capiba);
+}
+
+.option:active {
+  transform: scale(0.97);
+}
+
+.option:focus-visible {
+  outline: 3px solid var(--yellow-capiba);
+  outline-offset: 2px;
+}
+
+.selected,
+.selected:hover {
+  border-color: var(--orange-capiba);
+  background: var(--orange-capiba);
+  color: var(--background);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check {
+  flex-shrink: 0;
+}
+
+.toggle {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 320px;
+}
+
+.toggle .option {
+  border-radius: 12px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.cards .option {
+  flex-direction: column;
+  gap: 0.4rem;
+  min-height: 96px;
+  padding: 1rem 0.5rem;
+  border-radius: 16px;
+}
+
+.cards .icon {
+  color: var(--orange-capiba);
+}
+
+.cards .selected .icon {
+  color: var(--background);
+}
+
+.invalid .option {
+  border-color: var(--orange-capiba);
+}
+
+.invalid .option:not(.selected) {
+  background: var(--background-secondary);
+}
+
+@media (max-width: 480px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .toggle {
+    max-width: none;
+  }
+
+  .option {
+    font-size: 0.9rem;
+  }
+}

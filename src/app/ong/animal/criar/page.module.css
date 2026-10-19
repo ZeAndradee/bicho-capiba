@@ -14,25 +14,6 @@
   margin-bottom: 2rem;
 }
 
-.backButton {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: transparent;
-  border: none;
-  color: var(--orange-capiba);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0.5rem 0;
-  margin-bottom: 1rem;
-  transition: opacity 0.2s ease;
-}
-
-.backButton:hover {
-  opacity: 0.8;
-}
-
 .stepIndicator {
   display: flex;
   align-items: center;
@@ -988,10 +969,6 @@
 
   .previewContent {
     padding: 1rem 0.75rem;
-  }
-
-  .backButton {
-    font-size: 0.85rem;
   }
 }
 

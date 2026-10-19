@@ -17,6 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import Error from "@/components/UI/Error/Error";
+import Breadcrumb from "@/components/UI/Breadcrumb/Breadcrumb";
 import styles from "./page.module.css";
 
 type TabType = "personal" | "address" | "adoption";
@@ -169,6 +170,13 @@ export default function UserSettings() {
         <Error error={{ message: apiError }} className={styles.errorBanner} />
       )}
       <main className={styles.main}>
+        <Breadcrumb
+          className={styles.breadcrumb}
+          items={[
+            { label: "Perfil", href: "/perfil" },
+            { label: "Configurações" },
+          ]}
+        />
         <div className={styles.pageHeader}>
           <h1 className={styles.title}>Configurações do Perfil</h1>
           <p className={styles.subtitle}>

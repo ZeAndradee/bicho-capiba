@@ -5,6 +5,10 @@
   padding: 0 1rem;
 }
 
+.breadcrumb {
+  padding-top: 1.5rem;
+}
+
 .error {
   display: flex;
   flex-direction: column;

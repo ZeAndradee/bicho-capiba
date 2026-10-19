@@ -589,11 +589,40 @@
 
   .main {
     padding: 1rem;
-    gap: 2rem;
+    gap: 1.5rem;
   }
 
-  .section {
+  .section,
+  .sectionLarge,
+  .sectionSmall {
     padding: 1.25rem;
+  }
+
+  .sectionHeader {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.4rem;
+  }
+
+  .sectionDescription {
+    font-size: 0.9rem;
+  }
+
+  .sectionIconWrapper {
+    width: 40px;
+    height: 40px;
+  }
+
+  .favoritesList {
+    gap: 1rem;
+  }
+
+  .favoriteButton {
+    width: 44px;
+    height: 44px;
   }
 
   .donationHeader {
@@ -606,5 +635,76 @@
 
   .emptyDescription {
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 1.5rem 1rem 0.5rem;
+  }
+
+  .greeting {
+    font-size: 1.6rem;
+  }
+
+  .adoptionRow {
+    flex-wrap: wrap;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+  }
+
+  .adoptionImage {
+    width: 64px;
+    height: 64px;
+  }
+
+  .adoptionActions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .processButton {
+    width: 100%;
+    min-height: 44px;
+    font-size: 0.9rem;
+  }
+
+  .favoriteRow {
+    padding: 0.5rem 0;
+  }
+
+  .donationHeader {
+    padding: 1rem;
+  }
+
+  .donationAmount {
+    font-size: 1.4rem;
+  }
+
+  .donationContent {
+    padding: 1rem;
+  }
+
+  .donationOngName {
+    font-size: 1.1rem;
+  }
+
+  .emptyState {
+    padding: 2rem 0.5rem;
+  }
+
+  .emptyIcon {
+    font-size: 3rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .emptyTitle {
+    font-size: 1.2rem;
+  }
+
+  .emptyAction {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
   }
 }

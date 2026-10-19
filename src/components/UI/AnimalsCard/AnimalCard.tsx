@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import ImageWithFallback from "../Images/ImageWithFallback";
 import { likeAnimal, unlikeAnimal } from "@/services/Animals/Animal";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "./AnimalCard.module.css";
 
 interface AnimalCardProps {
@@ -47,6 +48,7 @@ export default function AnimalCard({
 }: AnimalCardProps) {
   const [isImageHovered, setIsImageHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const { isOng } = useAuth();
 
   useEffect(() => {
     setImageError(false);
@@ -120,21 +122,23 @@ export default function AnimalCard({
             />
           </Link>
         )}
-        <button
-          className={`${styles.favoriteButton} ${
-            isFavorite ? styles.favoriteButtonLiked : ""
-          }`}
-          onClick={handleFavoriteClick}
-          title={
-            isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"
-          }
-        >
-          {isFavorite ? (
-            <FaHeart className={styles.heartFilled} />
-          ) : (
-            <FaRegHeart className={styles.heart} />
-          )}
-        </button>
+        {!isOng && (
+          <button
+            className={`${styles.favoriteButton} ${
+              isFavorite ? styles.favoriteButtonLiked : ""
+            }`}
+            onClick={handleFavoriteClick}
+            title={
+              isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"
+            }
+          >
+            {isFavorite ? (
+              <FaHeart className={styles.heartFilled} />
+            ) : (
+              <FaRegHeart className={styles.heart} />
+            )}
+          </button>
+        )}
       </div>
 
       <div className={styles.content}>
@@ -205,7 +209,8 @@ export default function AnimalCard({
           <div className={styles.infoItem}>
             <FaMapMarkerAlt className={styles.icon} />
             <span className={styles.text}>
-              {distancia} • {bairroOng}, {cidadeOng}
+              {distancia && `${distancia} • `}
+              {bairroOng}, {cidadeOng}
             </span>
           </div>
         </div>

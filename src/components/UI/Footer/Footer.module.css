@@ -124,7 +124,30 @@
 
 @media (max-width: 480px) {
   .linksSection {
-    grid-template-columns: 1fr;
-    text-align: center;
+    gap: 1.5rem 1rem;
+  }
+
+  .linkColumn h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .linkColumn li {
+    margin-bottom: 0;
+  }
+
+  .linkColumn a {
+    display: inline-block;
+    padding: 0.45rem 0;
+    font-size: 0.95rem;
+  }
+
+  .socialIcon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .footerBottom {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
   }
 }

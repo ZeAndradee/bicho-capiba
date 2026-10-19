@@ -1,0 +1,37 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 0.875rem;
+  color: var(--text-color);
+}
+
+.link {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: var(--foreground);
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--orange-capiba);
+}
+
+.current {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.separator {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .link {
+    padding: 6px 0;
+  }
+}

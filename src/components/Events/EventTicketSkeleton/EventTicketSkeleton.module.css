@@ -1,0 +1,105 @@
+.ticket {
+  --stub-width: 92px;
+  --notch-size: 11px;
+  display: flex;
+  width: 100%;
+  min-height: 172px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--background-secondary);
+  -webkit-mask: radial-gradient(
+        circle var(--notch-size) at var(--stub-width) 0,
+        #0000 98%,
+        #000
+      )
+      top / 100% 51% no-repeat,
+    radial-gradient(
+        circle var(--notch-size) at var(--stub-width) 100%,
+        #0000 98%,
+        #000
+      )
+      bottom / 100% 51% no-repeat;
+  mask: radial-gradient(
+        circle var(--notch-size) at var(--stub-width) 0,
+        #0000 98%,
+        #000
+      )
+      top / 100% 51% no-repeat,
+    radial-gradient(
+        circle var(--notch-size) at var(--stub-width) 100%,
+        #0000 98%,
+        #000
+      )
+      bottom / 100% 51% no-repeat;
+}
+
+.compact {
+  min-height: 150px;
+}
+
+.stub,
+.line {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-shimmer) 37%,
+    var(--skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.stub {
+  flex: 0 0 var(--stub-width);
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 20px;
+}
+
+.line {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+}
+
+.chip {
+  width: 38%;
+}
+
+.title {
+  width: 72%;
+  height: 18px;
+}
+
+.meta {
+  width: 55%;
+}
+
+.address {
+  width: 85%;
+}
+
+.tag {
+  width: 30%;
+  margin-top: auto;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+@media (max-width: 480px) {
+  .ticket {
+    --stub-width: 76px;
+  }
+}

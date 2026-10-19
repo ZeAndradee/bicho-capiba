@@ -1,3 +1,4 @@
+import Breadcrumb from "@/components/UI/Breadcrumb/Breadcrumb";
 import styles from "./page.module.css";
 
 export const metadata = {
@@ -10,6 +11,10 @@ export default function CookiesPage() {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
+        <Breadcrumb
+          className={styles.breadcrumb}
+          items={[{ label: "Início", href: "/" }, { label: "Política de Cookies" }]}
+        />
         <header className={styles.header}>
           <h1>Política de Cookies</h1>
           <p className={styles.date}>

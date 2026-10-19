@@ -32,6 +32,10 @@
   margin: 0;
 }
 
+.breadcrumb {
+  margin-bottom: 1rem;
+}
+
 .main {
   max-width: 900px;
   margin: 0 auto;
@@ -356,14 +360,23 @@
   }
 
   .tabsContainer {
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.5rem;
+    flex-direction: row;
+    gap: 0.25rem;
+    padding: 0.35rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabsContainer::-webkit-scrollbar {
+    display: none;
   }
 
   .tab {
-    padding: 0.875rem 1rem;
+    flex: 0 0 auto;
+    padding: 0.75rem 1rem;
     font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .sectionTitle {

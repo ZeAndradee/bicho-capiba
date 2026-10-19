@@ -1,0 +1,53 @@
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15em 0.25em;
+  font-family: var(--title-font);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: lowercase;
+}
+
+.large {
+  font-size: clamp(3rem, 9vw, 6.5rem);
+}
+
+.medium {
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+}
+
+.strip {
+  display: inline-block;
+  padding: 0.08em 0.28em 0.14em;
+  background: var(--foreground);
+  color: white;
+  clip-path: polygon(
+    0 4%,
+    6% 0,
+    40% 3%,
+    72% 0,
+    100% 5%,
+    99% 52%,
+    100% 96%,
+    64% 100%,
+    30% 97%,
+    3% 100%,
+    1% 48%
+  );
+}
+
+.strip[data-index="0"] {
+  transform: rotate(-2deg);
+}
+
+.strip[data-index="1"] {
+  background: var(--orange-capiba);
+  transform: rotate(1.5deg) translateY(0.05em);
+}
+
+.strip[data-index="2"] {
+  background: var(--green-capiba);
+  transform: rotate(-1deg);
+}

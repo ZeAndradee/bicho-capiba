@@ -64,8 +64,7 @@ export interface SignupResponse {
 }
 
 export interface LoginResponse {
-  user: AuthUser;
-  token: string;
+  authUser: AuthUser;
 }
 
 const api = getApiInstance();

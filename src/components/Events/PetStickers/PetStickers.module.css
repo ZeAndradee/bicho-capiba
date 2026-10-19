@@ -1,0 +1,94 @@
+.stickers {
+  position: relative;
+  width: 360px;
+  height: 320px;
+  flex-shrink: 0;
+}
+
+.sticker {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  padding: 10px;
+  background: var(--background-secondary);
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.sticker img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.dog {
+  top: 0;
+  left: 0;
+  transform: rotate(-6deg);
+}
+
+.cat {
+  bottom: 0;
+  right: 0;
+  transform: rotate(5deg);
+}
+
+.paw {
+  position: absolute;
+  color: var(--yellow-capiba);
+}
+
+.pawOne {
+  top: 18px;
+  right: 46px;
+  transform: rotate(20deg);
+}
+
+.pawTwo {
+  top: 72px;
+  right: 18px;
+  transform: rotate(35deg);
+  opacity: 0.7;
+}
+
+.pawThree {
+  bottom: 40px;
+  left: 60px;
+  transform: rotate(-20deg);
+  color: var(--orange-capiba);
+  opacity: 0.6;
+}
+
+.caption {
+  position: absolute;
+  left: 24px;
+  bottom: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--foreground);
+  color: white;
+  font-family: var(--title-font);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transform: rotate(-3deg);
+  white-space: nowrap;
+}
+
+@media (max-width: 968px) {
+  .stickers {
+    width: 300px;
+    height: 260px;
+  }
+
+  .sticker {
+    width: 165px;
+    height: 165px;
+  }
+}
+
+@media (max-width: 640px) {
+  .stickers {
+    display: none;
+  }
+}

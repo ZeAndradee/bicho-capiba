@@ -1,20 +1,42 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { IoClose } from "react-icons/io5";
+import { FaArrowRight, FaClock, FaCheck } from "react-icons/fa";
 import {
-  FaQuestionCircle,
-  FaArrowRight,
-  FaClock,
-  FaCheck,
-} from "react-icons/fa";
+  House,
+  Building2,
+  Trees,
+  Tractor,
+  Sparkles,
+  ArrowLeft,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatUrlParam } from "@/utils/formatters";
-import { getApiInstance } from "@/hooks/Api";
+import {
+  Adopter,
+  createAdoption,
+  fetchAdopterProfile,
+} from "@/services/Adoption/Adoption";
 import { handleApiError, ErrorState } from "@/utils/ErrorHandler";
 import Error from "@/components/UI/Error/Error";
+import Counter from "@/components/UI/Counter/Counter";
+import ChoiceGroup, {
+  ChoiceOption,
+} from "@/components/UI/ChoiceGroup/ChoiceGroup";
+import StepSlider from "@/components/UI/StepSlider/StepSlider";
 import { validateAdoptionForm } from "@/validators/adoption";
+import {
+  LIVES_ALONE,
+  residenceOptions,
+  householdOptions,
+  childrenAgeOptions,
+  petSexOptions,
+  petAgeOptions,
+  petBehaviorOptions,
+  availableTimeOptions,
+} from "@/data/adoptionOptions";
 import styles from "./AdoptionModal.module.css";
 
 interface Animal {
@@ -52,45 +74,194 @@ interface FormData {
   tempo_disponivel: string;
 }
 
+const initialFormData: FormData = {
+  tipo_residencia: "",
+  area_externa: null,
+  possui_animais: null,
+  quantidade_animais: "",
+  tela_protetora: null,
+  quantidade_moradores: "1",
+  idade_animais: "",
+  sexo_animais: "",
+  comportamento_animais: "",
+  possui_criancas: null,
+  quantidade_criancas: "",
+  crianca_necessidade_especial: null,
+  faixa_etaria_criancas: "",
+  tipo_necessidade_criancas: "",
+  composicao_familiar: "",
+  familiar_necessidade_especial: null,
+  tipo_necessidade_especial_familiar: "",
+  experiencia_com_animais: null,
+  conhecimento_despesas_animais: null,
+  tempo_disponivel: "",
+};
+
+const STEPS: Array<{ title: string; fields: Array<keyof FormData> }> = [
+  {
+    title: "Moradia",
+    fields: ["tipo_residencia", "area_externa", "tela_protetora"],
+  },
+  {
+    title: "Família",
+    fields: [
+      "composicao_familiar",
+      "quantidade_moradores",
+      "possui_criancas",
+      "quantidade_criancas",
+      "faixa_etaria_criancas",
+      "crianca_necessidade_especial",
+      "tipo_necessidade_criancas",
+      "familiar_necessidade_especial",
+      "tipo_necessidade_especial_familiar",
+    ],
+  },
+  {
+    title: "Animais",
+    fields: [
+      "possui_animais",
+      "quantidade_animais",
+      "idade_animais",
+      "sexo_animais",
+      "comportamento_animais",
+      "experiencia_com_animais",
+    ],
+  },
+  {
+    title: "Rotina",
+    fields: ["conhecimento_despesas_animais", "tempo_disponivel"],
+  },
+];
+
+const yesNoOptions: ChoiceOption<boolean>[] = [
+  { value: true, label: "Sim" },
+  { value: false, label: "Não" },
+];
+
+const residenceIcons: Record<string, ReactNode> = {
+  casa: <House size={26} />,
+  apartamento: <Building2 size={26} />,
+  chacara: <Trees size={26} />,
+  sitio: <Tractor size={26} />,
+};
+
+const LIST_SEPARATOR = ", ";
+
+const toBoolean = (value: boolean | number | null | undefined) =>
+  value === null || value === undefined ? null : Boolean(value);
+
+const toText = (value: string | number | null | undefined) =>
+  value === null || value === undefined ? "" : String(value);
+
+const parseList = (value: string, known: string[]) => {
+  if (!value.trim()) return [];
+  const parts = value.split(LIST_SEPARATOR).map((part) => part.trim());
+  return parts.every((part) => known.includes(part)) ? parts : [value.trim()];
+};
+
+const toChoiceOptions = (known: string[], selected: string[]) =>
+  [...known, ...selected.filter((item) => !known.includes(item))].map(
+    (item) => ({ value: item, label: item })
+  );
+
+const profileToFormData = (profile: Partial<Adopter>): Partial<FormData> => {
+  const entries: Partial<FormData> = {
+    tipo_residencia: toText(profile.tipoResidencia),
+    area_externa: toBoolean(profile.areaExterna),
+    tela_protetora: toBoolean(profile.telaProtetora),
+    composicao_familiar: toText(profile.composicaoFamiliar),
+    quantidade_moradores: toText(profile.quantidadeMoradores),
+    possui_criancas: toBoolean(profile.possuiCriancas),
+    quantidade_criancas: toText(profile.quantidadeCriancas),
+    faixa_etaria_criancas: toText(profile.faixaEtariaCriancas),
+    crianca_necessidade_especial: toBoolean(profile.criancaNecessidadeEspecial),
+    tipo_necessidade_criancas: toText(profile.tipoNecessidadeCriancas),
+    familiar_necessidade_especial: toBoolean(
+      profile.familiarNecessidadeEspecial
+    ),
+    tipo_necessidade_especial_familiar: toText(
+      profile.tipoNecessidadeEspecialFamiliar
+    ),
+    possui_animais: toBoolean(profile.possuiAnimais),
+    quantidade_animais: toText(profile.quantidadeAnimais),
+    idade_animais: toText(profile.idadeAnimais),
+    sexo_animais: toText(profile.sexoAnimais),
+    experiencia_com_animais: toBoolean(profile.experienciaComAnimais),
+    comportamento_animais: toText(profile.comportamentoAnimais),
+    conhecimento_despesas_animais: toBoolean(
+      profile.conhecimentoDespesasAnimais
+    ),
+    tempo_disponivel: toText(profile.tempoDisponivel),
+  };
+
+  return Object.fromEntries(
+    Object.entries(entries).filter(
+      ([, value]) => value !== null && value !== ""
+    )
+  ) as Partial<FormData>;
+};
+
+const sanitizeFormData = (data: FormData): FormData => ({
+  ...data,
+  quantidade_criancas: data.possui_criancas ? data.quantidade_criancas : "",
+  faixa_etaria_criancas: data.possui_criancas ? data.faixa_etaria_criancas : "",
+  crianca_necessidade_especial: data.possui_criancas
+    ? data.crianca_necessidade_especial
+    : null,
+  tipo_necessidade_criancas:
+    data.possui_criancas && data.crianca_necessidade_especial
+      ? data.tipo_necessidade_criancas
+      : "",
+  tipo_necessidade_especial_familiar: data.familiar_necessidade_especial
+    ? data.tipo_necessidade_especial_familiar
+    : "",
+  quantidade_animais: data.possui_animais ? data.quantidade_animais : "",
+  idade_animais: data.possui_animais ? data.idade_animais : "",
+  sexo_animais: data.possui_animais ? data.sexo_animais : "",
+  comportamento_animais: data.possui_animais ? data.comportamento_animais : "",
+});
+
+function Field({
+  label,
+  hint,
+  error,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`${styles.field} ${error ? styles.fieldInvalid : ""}`}>
+      <span className={styles.label}>{label}</span>
+      {hint && <span className={styles.hint}>{hint}</span>}
+      {children}
+      {error && <span className={styles.error}>{error}</span>}
+    </div>
+  );
+}
+
 export default function AdoptionModal({
   isOpen,
   onClose,
   animal,
 }: AdoptionModalProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isOng } = useAuth();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<
     "auth" | "explanation" | "form" | "success"
   >("auth");
-  const [formData, setFormData] = useState<FormData>({
-    tipo_residencia: "",
-    area_externa: null,
-    possui_animais: null,
-    quantidade_animais: "",
-    tela_protetora: null,
-    quantidade_moradores: "",
-    idade_animais: "",
-    sexo_animais: "",
-    comportamento_animais: "",
-    possui_criancas: null,
-    quantidade_criancas: "",
-    crianca_necessidade_especial: null,
-    faixa_etaria_criancas: "",
-    tipo_necessidade_criancas: "",
-    composicao_familiar: "",
-    familiar_necessidade_especial: null,
-    tipo_necessidade_especial_familiar: "",
-    experiencia_com_animais: null,
-    conhecimento_despesas_animais: null,
-    tempo_disponivel: "",
-  });
-
+  const [formStep, setFormStep] = useState(0);
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [isPrefilled, setIsPrefilled] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const [error, setError] = useState<ErrorState | null>(null);
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const hasEdited = useRef(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -103,29 +274,46 @@ export default function AdoptionModal({
   }, [isOpen, isAuthenticated]);
 
   useEffect(() => {
+    if (!isOpen || !isAuthenticated || isOng) return;
+
+    let cancelled = false;
+
+    fetchAdopterProfile()
+      .then((profile) => {
+        if (cancelled || hasEdited.current) return;
+        const saved = profileToFormData(profile);
+        if (Object.keys(saved).length === 0) return;
+        setFormData({ ...initialFormData, ...saved });
+        setIsPrefilled(true);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, isAuthenticated, isOng]);
+
+  useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
       }
     };
 
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Element;
-      if (!target.closest(`.${styles.tooltip}`)) {
-        setActiveTooltip(null);
-      }
-    };
-
     if (isOpen) {
       document.addEventListener("keydown", handleEscape);
-      document.addEventListener("click", handleClickOutside);
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
-      document.removeEventListener("click", handleClickOutside);
+      document.body.style.overflow = "";
     };
   }, [isOpen, onClose]);
+
+  useEffect(() => {
+    bodyRef.current?.scrollTo({ top: 0 });
+  }, [formStep]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -133,14 +321,14 @@ export default function AdoptionModal({
     }
   };
 
-  const handleInputChange = (
-    field: keyof FormData,
-    value: string | boolean
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const updateForm = (changes: Partial<FormData>) => {
+    hasEdited.current = true;
+    setFormData((prev) => ({ ...prev, ...changes }));
+    setValidationErrors((prev) => {
+      const next = { ...prev };
+      Object.keys(changes).forEach((key) => delete next[key]);
+      return next;
+    });
   };
 
   const handleLoginRedirect = () => {
@@ -151,32 +339,72 @@ export default function AdoptionModal({
     router.push(`/cadastro?redirect=${formatUrlParam(`/adote/${animal.id}`)}`);
   };
 
-  const handleSubmit = async () => {
-    console.log("handleSubmit called");
-    console.log("formData:", formData);
-    setIsSubmitting(true);
-    setError(null);
-    setValidationErrors({});
-
+  const getStepErrors = (stepIndex: number) => {
     const errors = validateAdoptionForm(formData);
-    console.log("validation errors:", errors);
+    return Object.fromEntries(
+      Object.entries(errors).filter(([field]) =>
+        STEPS[stepIndex].fields.includes(field as keyof FormData)
+      )
+    );
+  };
+
+  const focusFirstError = () => {
+    requestAnimationFrame(() => {
+      bodyRef.current
+        ?.querySelector(`.${styles.fieldInvalid}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  };
+
+  const handleNext = () => {
+    const errors = getStepErrors(formStep);
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
-      setIsSubmitting(false);
+      focusFirstError();
       return;
     }
 
+    setValidationErrors({});
+    setFormStep((step) => step + 1);
+  };
+
+  const handleBack = () => {
+    setValidationErrors({});
+    if (formStep === 0) {
+      setCurrentStep("explanation");
+      return;
+    }
+    setFormStep((step) => step - 1);
+  };
+
+  const handleSubmit = async () => {
+    setError(null);
+
+    const errors = validateAdoptionForm(formData);
+    if (Object.keys(errors).length > 0) {
+      const stepWithError = STEPS.findIndex((step) =>
+        step.fields.some((field) => errors[field])
+      );
+      setFormStep(stepWithError === -1 ? formStep : stepWithError);
+      setValidationErrors(errors);
+      focusFirstError();
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      const api = getApiInstance();
-      await api.post("/adoptions", {
+      await createAdoption({
         animal_id: animal.id,
-        ...formData,
+        ...sanitizeFormData(formData),
       });
 
       setCurrentStep("success");
     } catch (error) {
       const errorState = handleApiError(error, {
         400: "Verifique os campos preenchidos e tente novamente.",
+        403: "Contas de ONG não podem solicitar adoções.",
+        409: "Você já enviou uma solicitação para este animal ou ele já foi adotado.",
         422: "Alguns campos são obrigatórios. Verifique e tente novamente.",
       });
       setError(errorState);
@@ -185,20 +413,15 @@ export default function AdoptionModal({
     }
   };
 
-  const Tooltip = ({ text, id }: { text: string; id: string }) => (
-    <div className={styles.tooltip}>
-      <FaQuestionCircle
-        className={styles.tooltipIcon}
-        onClick={() => setActiveTooltip(activeTooltip === id ? null : id)}
-      />
-      <span
-        className={`${styles.tooltipText} ${
-          activeTooltip === id ? styles.tooltipActive : ""
-        }`}
-      >
-        {text}
-      </span>
-    </div>
+  const renderYesNo = (name: keyof FormData, label: string) => (
+    <ChoiceGroup<boolean>
+      label={label}
+      variant="toggle"
+      options={yesNoOptions}
+      value={formData[name] as boolean | null}
+      invalid={Boolean(validationErrors[name])}
+      onChange={(value) => updateForm({ [name]: value })}
+    />
   );
 
   const renderAuthStep = () => (
@@ -307,9 +530,10 @@ export default function AdoptionModal({
           um processo criterioso de adoção.
         </p>
         <p>
-          O próximo passo é preencher um formulário com informações sobre sua
-          família, residência e experiência com animais. <br /> <br /> Essas
-          informações ajudam a ONG responsável a:
+          O próximo passo é responder algumas perguntas rápidas sobre sua
+          família, residência e experiência com animais. São só 4 etapas, quase
+          tudo com um toque. <br /> <br /> Essas informações ajudam a ONG
+          responsável a:
         </p>
         <ul className={styles.explanationList}>
           <li>Garantir que {animal.nome} terá um lar seguro e adequado</li>
@@ -329,7 +553,10 @@ export default function AdoptionModal({
         <button
           type="button"
           className={styles.continueButton}
-          onClick={() => setCurrentStep("form")}
+          onClick={() => {
+            setFormStep(0);
+            setCurrentStep("form");
+          }}
         >
           Continuar para o Formulário
           <FaArrowRight />
@@ -338,508 +565,431 @@ export default function AdoptionModal({
     </div>
   );
 
-  const renderFormStep = () => (
-    <form className={styles.form}>
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Informações da Residência</h3>
+  const renderHomeStep = () => (
+    <>
+      <Field error={validationErrors.tipo_residencia} label="Onde você mora?">
+        <ChoiceGroup<string>
+          label="Tipo de residência"
+          variant="cards"
+          value={formData.tipo_residencia || null}
+          invalid={Boolean(validationErrors.tipo_residencia)}
+          options={residenceOptions.map((option) => ({
+            ...option,
+            icon: residenceIcons[option.value],
+          }))}
+          onChange={(value) => updateForm({ tipo_residencia: value })}
+        />
+      </Field>
 
-        <div className={styles.field}>
-          <label className={styles.label}>Tipo de Residência</label>
-          <select
-            className={styles.select}
-            value={formData.tipo_residencia}
-            onChange={(e) =>
-              handleInputChange("tipo_residencia", e.target.value)
-            }
-            required
-          >
-            <option value="">Selecione...</option>
-            <option value="casa">Casa</option>
-            <option value="apartamento">Apartamento</option>
-            <option value="chacara">Chácara</option>
-            <option value="sitio">Sítio</option>
-          </select>
-          {validationErrors.tipo_residencia && (
-            <span className={styles.error}>
-              {validationErrors.tipo_residencia}
-            </span>
-          )}
-        </div>
+      <Field
+        error={validationErrors.area_externa}
+        label="Tem área externa?"
+        hint="Quintal, varanda ou área descoberta onde o animal possa ficar"
+      >
+        {renderYesNo("area_externa", "Possui área externa")}
+      </Field>
 
-        <div className={styles.field}>
-          <label className={styles.label}>
-            Possui área externa?
-            <Tooltip
-              text="Quintal, varanda ou área descoberta onde o animal possa ficar"
-              id="area_externa"
-            />
-          </label>
-          <div className={styles.radioGroup}>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="area_externa"
-                checked={formData.area_externa === true}
-                onChange={() => handleInputChange("area_externa", true)}
-              />
-              Sim
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="area_externa"
-                checked={formData.area_externa === false}
-                onChange={() => handleInputChange("area_externa", false)}
-              />
-              Não
-            </label>
-          </div>
-          {validationErrors.area_externa && (
-            <span className={styles.error}>
-              {validationErrors.area_externa}
-            </span>
-          )}
-        </div>
+      <Field
+        error={validationErrors.tela_protetora}
+        label="Janelas e varandas têm tela de proteção?"
+        hint="Telas evitam quedas e fugas, principalmente de gatos"
+      >
+        {renderYesNo("tela_protetora", "Possui tela protetora")}
+      </Field>
+    </>
+  );
 
-        <div className={styles.field}>
-          <label className={styles.label}>
-            Possui tela protetora?
-            <Tooltip
-              text="Telas de proteção em janelas e varandas para evitar quedas"
-              id="tela_protetora"
-            />
-          </label>
-          <div className={styles.radioGroup}>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="tela_protetora"
-                checked={formData.tela_protetora === true}
-                onChange={() => handleInputChange("tela_protetora", true)}
-              />
-              Sim
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="tela_protetora"
-                checked={formData.tela_protetora === false}
-                onChange={() => handleInputChange("tela_protetora", false)}
-              />
-              Não
-            </label>
-          </div>
-          {validationErrors.tela_protetora && (
-            <span className={styles.error}>
-              {validationErrors.tela_protetora}
-            </span>
-          )}
-        </div>
+  const renderFamilyStep = () => {
+    const household = parseList(formData.composicao_familiar, householdOptions);
+    const childrenCount = Number(formData.quantidade_criancas) || 1;
 
-        <div className={styles.field}>
-          <label className={styles.label}>
-            Quantidade de moradores na casa
-          </label>
-          <input
-            type="number"
-            className={styles.input}
-            value={formData.quantidade_moradores || ""}
-            onChange={(e) =>
-              handleInputChange("quantidade_moradores", e.target.value)
-            }
-            min="1"
-            required
+    return (
+      <>
+        <Field
+          error={validationErrors.composicao_familiar}
+          label="Quem mora com você?"
+          hint="Marque todas as opções que se aplicam"
+        >
+          <ChoiceGroup<string>
+            multiple
+            label="Composição familiar"
+            value={household}
+            invalid={Boolean(validationErrors.composicao_familiar)}
+            options={toChoiceOptions(householdOptions, household)}
+            onChange={(values) => {
+              const justSelectedAlone =
+                values.includes(LIVES_ALONE) &&
+                !household.includes(LIVES_ALONE);
+              const next = justSelectedAlone
+                ? [LIVES_ALONE]
+                : values.filter(
+                    (item) => item !== LIVES_ALONE || values.length === 1
+                  );
+              updateForm({
+                composicao_familiar: next.join(LIST_SEPARATOR),
+                ...(justSelectedAlone ? { quantidade_moradores: "1" } : {}),
+              });
+            }}
           />
-          {validationErrors.quantidade_moradores && (
-            <span className={styles.error}>
-              {validationErrors.quantidade_moradores}
-            </span>
-          )}
-        </div>
-      </div>
+        </Field>
 
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Outros Animais</h3>
+        <Field
+          error={validationErrors.quantidade_moradores}
+          label="Quantas pessoas moram na casa?"
+          hint="Contando com você"
+        >
+          <Counter
+            label="moradores"
+            min={1}
+            max={20}
+            unit={["pessoa", "pessoas"]}
+            value={Number(formData.quantidade_moradores) || 1}
+            onChange={(value) =>
+              updateForm({ quantidade_moradores: String(value) })
+            }
+          />
+        </Field>
 
-        <div className={styles.field}>
-          <label className={styles.label}>Já possui outros animais?</label>
-          <div className={styles.radioGroup}>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="possui_animais"
-                checked={formData.possui_animais === true}
-                onChange={() => handleInputChange("possui_animais", true)}
-              />
-              Sim
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="possui_animais"
-                checked={formData.possui_animais === false}
-                onChange={() => handleInputChange("possui_animais", false)}
-              />
-              Não
-            </label>
-          </div>
-        </div>
-
-        {formData.possui_animais === true && (
-          <>
-            <div className={styles.field}>
-              <label className={styles.label}>Quantos animais?</label>
-              <input
-                type="number"
-                className={styles.input}
-                value={formData.quantidade_animais || ""}
-                onChange={(e) =>
-                  handleInputChange("quantidade_animais", e.target.value)
-                }
-                min="1"
-                required
-              />
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label}>Idade dos animais</label>
-              <input
-                type="text"
-                className={styles.input}
-                value={formData.idade_animais}
-                onChange={(e) =>
-                  handleInputChange("idade_animais", e.target.value)
-                }
-                placeholder="Ex: 2 anos, 6 meses..."
-              />
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label}>Sexo dos animais</label>
-              <select
-                className={styles.select}
-                value={formData.sexo_animais}
-                onChange={(e) =>
-                  handleInputChange("sexo_animais", e.target.value)
-                }
-              >
-                <option value="">Selecione...</option>
-                <option value="machos">Machos</option>
-                <option value="femeas">Fêmeas</option>
-                <option value="ambos">Ambos</option>
-              </select>
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label}>Comportamento dos animais</label>
-              <textarea
-                className={styles.textarea}
-                value={formData.comportamento_animais}
-                onChange={(e) =>
-                  handleInputChange("comportamento_animais", e.target.value)
-                }
-                placeholder="Descreva o comportamento dos seus animais..."
-                rows={3}
-              />
-            </div>
-          </>
-        )}
-      </div>
-
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Crianças na Família</h3>
-
-        <div className={styles.field}>
-          <label className={styles.label}>Possui crianças em casa?</label>
-          <div className={styles.radioGroup}>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="possui_criancas"
-                checked={formData.possui_criancas === true}
-                onChange={() => handleInputChange("possui_criancas", true)}
-              />
-              Sim
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="possui_criancas"
-                checked={formData.possui_criancas === false}
-                onChange={() => handleInputChange("possui_criancas", false)}
-              />
-              Não
-            </label>
-          </div>
-        </div>
+        <Field
+          error={validationErrors.possui_criancas}
+          label="Tem crianças em casa?"
+        >
+          <ChoiceGroup<boolean>
+            label="Possui crianças"
+            variant="toggle"
+            options={yesNoOptions}
+            value={formData.possui_criancas}
+            invalid={Boolean(validationErrors.possui_criancas)}
+            onChange={(value) =>
+              updateForm({
+                possui_criancas: value,
+                ...(value && !formData.quantidade_criancas
+                  ? { quantidade_criancas: "1" }
+                  : {}),
+              })
+            }
+          />
+        </Field>
 
         {formData.possui_criancas === true && (
-          <>
-            <div className={styles.field}>
-              <label className={styles.label}>Quantidade de crianças</label>
-              <input
-                type="number"
-                className={styles.input}
-                value={formData.quantidade_criancas || ""}
-                onChange={(e) =>
-                  handleInputChange("quantidade_criancas", e.target.value)
+          <div className={styles.nested}>
+            <Field
+              error={validationErrors.quantidade_criancas}
+              label="Quantas crianças?"
+            >
+              <Counter
+                label="crianças"
+                min={1}
+                max={15}
+                unit={["criança", "crianças"]}
+                value={childrenCount}
+                onChange={(value) =>
+                  updateForm({ quantidade_criancas: String(value) })
                 }
-                min="1"
-                required
               />
-            </div>
+            </Field>
 
-            <div className={styles.field}>
-              <label className={styles.label}>Faixa etária das crianças</label>
-              <select
-                className={styles.select}
-                value={formData.faixa_etaria_criancas}
-                onChange={(e) =>
-                  handleInputChange("faixa_etaria_criancas", e.target.value)
+            <Field
+              error={validationErrors.faixa_etaria_criancas}
+              label="Qual a idade delas?"
+            >
+              <ChoiceGroup<string>
+                label="Faixa etária das crianças"
+                value={formData.faixa_etaria_criancas || null}
+                invalid={Boolean(validationErrors.faixa_etaria_criancas)}
+                options={childrenAgeOptions}
+                onChange={(value) =>
+                  updateForm({ faixa_etaria_criancas: value })
                 }
-              >
-                <option value="">Selecione...</option>
-                <option value="0-2">0-2 anos</option>
-                <option value="3-5">3-5 anos</option>
-                <option value="6-10">6-10 anos</option>
-                <option value="11-15">11-15 anos</option>
-                <option value="16+">16+ anos</option>
-                <option value="variadas">Idades variadas</option>
-              </select>
-            </div>
+              />
+            </Field>
 
-            <div className={styles.field}>
-              <label className={styles.label}>
-                Alguma criança possui necessidade especial?
-              </label>
-              <div className={styles.radioGroup}>
-                <label className={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name="crianca_necessidade_especial"
-                    checked={formData.crianca_necessidade_especial === true}
-                    onChange={() =>
-                      handleInputChange("crianca_necessidade_especial", true)
-                    }
-                  />
-                  Sim
-                </label>
-                <label className={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name="crianca_necessidade_especial"
-                    checked={formData.crianca_necessidade_especial === false}
-                    onChange={() =>
-                      handleInputChange("crianca_necessidade_especial", false)
-                    }
-                  />
-                  Não
-                </label>
-              </div>
-            </div>
+            <Field
+              error={validationErrors.crianca_necessidade_especial}
+              label="Alguma criança tem necessidade especial?"
+            >
+              {renderYesNo(
+                "crianca_necessidade_especial",
+                "Criança com necessidade especial"
+              )}
+            </Field>
 
             {formData.crianca_necessidade_especial === true && (
-              <div className={styles.field}>
-                <label className={styles.label}>
-                  Tipo de necessidade especial
-                </label>
+              <Field
+                error={validationErrors.tipo_necessidade_criancas}
+                label="Conte um pouco sobre a necessidade"
+              >
                 <input
                   type="text"
                   className={styles.input}
                   value={formData.tipo_necessidade_criancas}
                   onChange={(e) =>
-                    handleInputChange(
-                      "tipo_necessidade_criancas",
-                      e.target.value
-                    )
+                    updateForm({ tipo_necessidade_criancas: e.target.value })
                   }
-                  placeholder="Descreva a necessidade especial..."
+                  placeholder="Ex: autismo, mobilidade reduzida..."
                 />
-              </div>
+              </Field>
             )}
-          </>
-        )}
-      </div>
-
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Informações Gerais</h3>
-
-        <div className={styles.field}>
-          <label className={styles.label}>Composição familiar</label>
-          <textarea
-            className={styles.textarea}
-            value={formData.composicao_familiar}
-            onChange={(e) =>
-              handleInputChange("composicao_familiar", e.target.value)
-            }
-            placeholder="Descreva quem mora na casa (idades, parentesco, etc.)"
-            rows={3}
-            required
-          />
-          {validationErrors.composicao_familiar && (
-            <span className={styles.error}>
-              {validationErrors.composicao_familiar}
-            </span>
-          )}
-        </div>
-
-        <div className={styles.field}>
-          <label className={styles.label}>
-            Algum familiar possui necessidade especial?
-          </label>
-          <div className={styles.radioGroup}>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="familiar_necessidade_especial"
-                checked={formData.familiar_necessidade_especial === true}
-                onChange={() =>
-                  handleInputChange("familiar_necessidade_especial", true)
-                }
-              />
-              Sim
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="familiar_necessidade_especial"
-                checked={formData.familiar_necessidade_especial === false}
-                onChange={() =>
-                  handleInputChange("familiar_necessidade_especial", false)
-                }
-              />
-              Não
-            </label>
           </div>
-        </div>
+        )}
+
+        <Field
+          error={validationErrors.familiar_necessidade_especial}
+          label="Algum adulto da casa tem necessidade especial?"
+        >
+          {renderYesNo(
+            "familiar_necessidade_especial",
+            "Familiar com necessidade especial"
+          )}
+        </Field>
 
         {formData.familiar_necessidade_especial === true && (
-          <div className={styles.field}>
-            <label className={styles.label}>Tipo de necessidade especial</label>
-            <input
-              type="text"
-              className={styles.input}
-              value={formData.tipo_necessidade_especial_familiar}
-              onChange={(e) =>
-                handleInputChange(
-                  "tipo_necessidade_especial_familiar",
-                  e.target.value
-                )
-              }
-              placeholder="Descreva a necessidade especial..."
-            />
+          <div className={styles.nested}>
+            <Field
+              error={validationErrors.tipo_necessidade_especial_familiar}
+              label="Conte um pouco sobre a necessidade"
+            >
+              <input
+                type="text"
+                className={styles.input}
+                value={formData.tipo_necessidade_especial_familiar}
+                onChange={(e) =>
+                  updateForm({
+                    tipo_necessidade_especial_familiar: e.target.value,
+                  })
+                }
+                placeholder="Ex: deficiência visual, alergia..."
+              />
+            </Field>
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const renderPetsStep = () => {
+    const behaviors = parseList(
+      formData.comportamento_animais,
+      petBehaviorOptions
+    );
+    const petAge = formData.idade_animais ? [formData.idade_animais] : [];
+
+    return (
+      <>
+        <Field
+          error={validationErrors.possui_animais}
+          label="Já tem outros animais?"
+        >
+          <ChoiceGroup<boolean>
+            label="Possui outros animais"
+            variant="toggle"
+            options={yesNoOptions}
+            value={formData.possui_animais}
+            invalid={Boolean(validationErrors.possui_animais)}
+            onChange={(value) =>
+              updateForm({
+                possui_animais: value,
+                ...(value && !formData.quantidade_animais
+                  ? { quantidade_animais: "1" }
+                  : {}),
+              })
+            }
+          />
+        </Field>
+
+        {formData.possui_animais === true && (
+          <div className={styles.nested}>
+            <Field error={validationErrors.quantidade_animais} label="Quantos?">
+              <Counter
+                label="animais"
+                min={1}
+                max={20}
+                unit={["animal", "animais"]}
+                value={Number(formData.quantidade_animais) || 1}
+                onChange={(value) =>
+                  updateForm({ quantidade_animais: String(value) })
+                }
+              />
+            </Field>
+
+            <Field
+              error={validationErrors.idade_animais}
+              label="Qual a idade deles?"
+            >
+              <ChoiceGroup<string>
+                label="Idade dos animais"
+                value={formData.idade_animais || null}
+                invalid={Boolean(validationErrors.idade_animais)}
+                options={toChoiceOptions(petAgeOptions, petAge)}
+                onChange={(value) => updateForm({ idade_animais: value })}
+              />
+            </Field>
+
+            <Field
+              error={validationErrors.sexo_animais}
+              label="São machos ou fêmeas?"
+            >
+              <ChoiceGroup<string>
+                label="Sexo dos animais"
+                value={formData.sexo_animais || null}
+                invalid={Boolean(validationErrors.sexo_animais)}
+                options={petSexOptions}
+                onChange={(value) => updateForm({ sexo_animais: value })}
+              />
+            </Field>
+
+            <Field
+              error={validationErrors.comportamento_animais}
+              label="Como eles se comportam?"
+              hint="Marque todas as opções que se aplicam"
+            >
+              <ChoiceGroup<string>
+                multiple
+                label="Comportamento dos animais"
+                value={behaviors}
+                invalid={Boolean(validationErrors.comportamento_animais)}
+                options={toChoiceOptions(petBehaviorOptions, behaviors)}
+                onChange={(values) =>
+                  updateForm({
+                    comportamento_animais: values.join(LIST_SEPARATOR),
+                  })
+                }
+              />
+            </Field>
           </div>
         )}
 
-        <div className={styles.field}>
-          <label className={styles.label}>
-            Possui experiência com animais?
-          </label>
-          <div className={styles.radioGroup}>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="experiencia_com_animais"
-                checked={formData.experiencia_com_animais === true}
-                onChange={() =>
-                  handleInputChange("experiencia_com_animais", true)
-                }
-              />
-              Sim
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="experiencia_com_animais"
-                checked={formData.experiencia_com_animais === false}
-                onChange={() =>
-                  handleInputChange("experiencia_com_animais", false)
-                }
-              />
-              Não
-            </label>
-          </div>
-        </div>
-
-        <div className={styles.field}>
-          <label className={styles.label}>
-            Tem conhecimento sobre as despesas com animais?
-            <Tooltip
-              text="Ração, veterinário, vacinas, medicamentos, etc."
-              id="despesasAnimais"
-            />
-          </label>
-          <div className={styles.radioGroup}>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="conhecimento_despesas_animais"
-                checked={formData.conhecimento_despesas_animais === true}
-                onChange={() =>
-                  handleInputChange("conhecimento_despesas_animais", true)
-                }
-              />
-              Sim
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="conhecimento_despesas_animais"
-                checked={formData.conhecimento_despesas_animais === false}
-                onChange={() =>
-                  handleInputChange("conhecimento_despesas_animais", false)
-                }
-              />
-              Não
-            </label>
-          </div>
-        </div>
-
-        <div className={styles.field}>
-          <label className={styles.label}>Tempo disponível para o animal</label>
-          <select
-            className={styles.select}
-            value={formData.tempo_disponivel}
-            onChange={(e) =>
-              handleInputChange("tempo_disponivel", e.target.value)
-            }
-            required
-          >
-            <option value="">Selecione...</option>
-            <option value="poucas-horas">Poucas horas por dia</option>
-            <option value="meio-periodo">Meio período</option>
-            <option value="periodo-integral">Período integral</option>
-            <option value="fins-de-semana">Apenas fins de semana</option>
-          </select>
-          {validationErrors.tempo_disponivel && (
-            <span className={styles.error}>
-              {validationErrors.tempo_disponivel}
-            </span>
+        <Field
+          error={validationErrors.experiencia_com_animais}
+          label="Já cuidou de animais antes?"
+        >
+          {renderYesNo(
+            "experiencia_com_animais",
+            "Possui experiência com animais"
           )}
+        </Field>
+      </>
+    );
+  };
+
+  const renderRoutineStep = () => (
+    <>
+      <Field
+        error={validationErrors.conhecimento_despesas_animais}
+        label="Você conhece os custos de ter um pet?"
+        hint="Ração, veterinário, vacinas, medicamentos, etc."
+      >
+        {renderYesNo(
+          "conhecimento_despesas_animais",
+          "Conhece as despesas com animais"
+        )}
+      </Field>
+
+      <Field
+        error={validationErrors.tempo_disponivel}
+        label={`Quanto tempo você terá para ${
+          animal.sexo === "M" ? "o" : "a"
+        } ${animal.nome}?`}
+      >
+        <StepSlider
+          label="Tempo disponível"
+          options={availableTimeOptions}
+          value={formData.tempo_disponivel}
+          invalid={Boolean(validationErrors.tempo_disponivel)}
+          onChange={(value) => updateForm({ tempo_disponivel: value })}
+        />
+      </Field>
+    </>
+  );
+
+  const stepRenderers = [
+    renderHomeStep,
+    renderFamilyStep,
+    renderPetsStep,
+    renderRoutineStep,
+  ];
+  const isLastStep = formStep === STEPS.length - 1;
+
+  const renderFormStep = () => (
+    <>
+      <div className={styles.header}>
+        <div className={styles.titleContainer}>
+          <span className={styles.stepCounter}>
+            Etapa {formStep + 1} de {STEPS.length}
+          </span>
+          <h2 className={styles.title}>
+            Adotar {animal.sexo === "M" ? "o" : "a"} {animal.nome}
+          </h2>
         </div>
+        <button
+          className={styles.closeButton}
+          onClick={onClose}
+          type="button"
+          aria-label="Fechar"
+        >
+          <IoClose />
+        </button>
       </div>
 
-      {error && <Error error={error} />}
+      <ol className={styles.progress}>
+        {STEPS.map((step, index) => (
+          <li
+            key={step.title}
+            className={`${styles.progressItem} ${
+              index <= formStep ? styles.progressDone : ""
+            } ${index === formStep ? styles.progressCurrent : ""}`}
+          >
+            <span className={styles.progressBar} />
+            <span className={styles.progressLabel}>{step.title}</span>
+          </li>
+        ))}
+      </ol>
+
+      <div className={styles.form} ref={bodyRef}>
+        {isPrefilled && formStep === 0 && (
+          <div className={styles.prefillBanner}>
+            <Sparkles size={18} />
+            <span>
+              Preenchemos com suas respostas anteriores. Confira e ajuste se
+              algo mudou.
+            </span>
+          </div>
+        )}
+        {stepRenderers[formStep]()}
+        {isLastStep && error && <Error error={error} />}
+      </div>
 
       <div className={styles.actions}>
         <button
           type="button"
           className={styles.backButton}
-          onClick={() => setCurrentStep("explanation")}
+          onClick={handleBack}
           disabled={isSubmitting}
         >
+          <ArrowLeft size={18} />
           Voltar
         </button>
-        <button
-          type="button"
-          className={styles.submitButton}
-          disabled={isSubmitting}
-          onClick={handleSubmit}
-        >
-          {isSubmitting ? "Enviando..." : "Enviar Solicitação"}
-        </button>
+        {isLastStep ? (
+          <button
+            type="button"
+            className={styles.submitButton}
+            disabled={isSubmitting}
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? "Enviando..." : "Enviar Solicitação"}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={styles.submitButton}
+            onClick={handleNext}
+          >
+            Próximo
+            <FaArrowRight />
+          </button>
+        )}
       </div>
-    </form>
+    </>
   );
 
   if (!isOpen) return null;
@@ -849,33 +999,17 @@ export default function AdoptionModal({
       <div
         className={`${styles.modal} ${
           currentStep === "auth" ? styles.modalAuth : ""
-        }`}
+        } ${currentStep === "form" ? styles.modalForm : ""}`}
+        role="dialog"
+        aria-modal="true"
       >
-        {currentStep === "auth" ? (
-          renderAuthStep()
-        ) : currentStep === "explanation" ? (
-          renderExplanationStep()
-        ) : currentStep === "success" ? (
-          renderSuccessStep()
-        ) : (
-          <>
-            <div className={styles.header}>
-              <div className={styles.titleContainer}>
-                <h2 className={styles.title}>
-                  Adotar {animal.sexo === "M" ? "o" : "a"} {animal.nome}
-                </h2>
-              </div>
-              <button
-                className={styles.closeButton}
-                onClick={onClose}
-                type="button"
-              >
-                <IoClose />
-              </button>
-            </div>{" "}
-            {renderFormStep()}
-          </>
-        )}
+        {currentStep === "auth"
+          ? renderAuthStep()
+          : currentStep === "explanation"
+            ? renderExplanationStep()
+            : currentStep === "success"
+              ? renderSuccessStep()
+              : renderFormStep()}
       </div>
     </div>
   );

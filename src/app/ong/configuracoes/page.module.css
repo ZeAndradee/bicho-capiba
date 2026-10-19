@@ -33,6 +33,10 @@
   margin: 0;
 }
 
+.breadcrumb {
+  margin-bottom: 1rem;
+}
+
 .main {
   max-width: var(--page-max-width);
   margin: 0 auto;

@@ -1,3 +1,4 @@
+import Breadcrumb from "@/components/UI/Breadcrumb/Breadcrumb";
 import styles from "./page.module.css";
 
 export const metadata = {
@@ -10,6 +11,10 @@ export default function TermosPage() {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
+        <Breadcrumb
+          className={styles.breadcrumb}
+          items={[{ label: "Início", href: "/" }, { label: "Termos de Uso" }]}
+        />
         <header className={styles.header}>
           <h1>Termos de Uso</h1>
           <p className={styles.date}>

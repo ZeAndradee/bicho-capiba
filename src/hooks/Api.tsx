@@ -1,12 +1,13 @@
 import axios from "axios";
 
-const baseUrl =
-  process.env.NEXT_PUBLIC_API_URL || "https://bicho-capiba-back.onrender.com/";
+const baseUrl = (
+  process.env.NEXT_PUBLIC_API_URL || "https://bicho-capiba-back.onrender.com"
+).replace(/\/+$/, "");
 const withCredentials = true;
 
 const createApiInstance = () => {
   const instance = axios.create({
-    baseURL: `${baseUrl}api`,
+    baseURL: `${baseUrl}/api`,
     timeout: 40000,
     withCredentials,
   });
