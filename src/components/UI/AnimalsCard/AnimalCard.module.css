@@ -169,3 +169,18 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+@media (max-width: 480px) {
+  .card,
+  .cardCompact {
+    width: 100%;
+    min-width: 0;
+    max-width: 420px;
+  }
+
+  .imageContainer,
+  .cardCompact .imageContainer {
+    height: auto;
+    aspect-ratio: 16 / 11;
+  }
+}

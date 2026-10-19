@@ -1,0 +1,243 @@
+.section {
+  background: var(--background);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--title-font);
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+.pendingBadge {
+  background: var(--yellow-capiba);
+  color: var(--background);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.refreshButton,
+.retryButton,
+.loadMoreButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  background: var(--background);
+  color: var(--text-color);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refreshButton:hover:not(:disabled),
+.retryButton:hover,
+.loadMoreButton:hover:not(:disabled) {
+  border-color: var(--orange-capiba);
+  color: var(--orange-capiba);
+}
+
+.refreshButton:disabled,
+.loadMoreButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loadMoreButton {
+  align-self: center;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  background: var(--background);
+  color: var(--text-color);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  border-color: var(--orange-capiba);
+  color: var(--orange-capiba);
+}
+
+.tab.activeTab {
+  background: var(--orange-capiba);
+  border-color: var(--orange-capiba);
+  color: var(--background);
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2.5rem 1rem;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.item:hover {
+  border-color: var(--orange-capiba);
+  transform: translateY(-1px);
+}
+
+.animalPhoto {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--border-color);
+}
+
+.photo {
+  object-fit: cover;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.itemTitle {
+  color: var(--foreground);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.meta {
+  color: var(--text-color);
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.statusBadge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 2px solid currentColor;
+  flex-shrink: 0;
+}
+
+.pendente {
+  color: var(--yellow-capiba);
+}
+
+.aprovado {
+  color: var(--green-capiba);
+}
+
+.rejeitado {
+  color: var(--orange-capiba);
+}
+
+.action {
+  color: var(--orange-capiba);
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .item {
+    flex-wrap: wrap;
+  }
+
+  .info {
+    flex-basis: calc(100% - 56px - 1rem);
+  }
+
+  .statusBadge {
+    margin-left: calc(56px + 1rem);
+  }
+
+  .action {
+    margin-left: auto;
+  }
+}

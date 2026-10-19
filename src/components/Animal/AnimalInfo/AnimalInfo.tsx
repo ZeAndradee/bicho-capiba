@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LuBuilding, LuCake, LuHeartOff } from "react-icons/lu";
+import { LuBuilding, LuCake, LuHeartOff, LuMapPin } from "react-icons/lu";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import ImageWithFallback from "@/components/UI/Images/ImageWithFallback";
 import AdoptionModal from "@/components/Animal/AdoptionModal/AdoptionModal";
+import { useAuth } from "@/contexts/AuthContext";
 import { formatUrlParam } from "@/utils/formatters";
 import styles from "./AnimalInfo.module.css";
 
@@ -21,6 +22,7 @@ interface Animal {
   descricao: string;
   historia?: string;
   castrado?: boolean;
+  statusAnimal?: string;
 }
 
 interface Ong {
@@ -43,16 +45,47 @@ export default function AnimalInfo({
 }: AnimalInfoProps) {
   const [showFullStory, setShowFullStory] = useState(false);
   const [isAdoptionModalOpen, setIsAdoptionModalOpen] = useState(false);
+  const { isOng } = useAuth();
+
+  const isAdopted = animal?.statusAnimal === "Adotado";
+  const canAdopt = !isAdopted && !isOng;
 
   useEffect(() => {
-    if (shouldOpenModal && animal && ong) {
+    if (shouldOpenModal && animal && ong && canAdopt) {
       setIsAdoptionModalOpen(true);
     }
-  }, [shouldOpenModal, animal, ong]);
+  }, [shouldOpenModal, animal, ong, canAdopt]);
 
   if (!animal || !ong) {
     return null;
   }
+
+  const renderAdoptAction = (variantClass: string) => {
+    if (isAdopted) {
+      return (
+        <p className={`${styles.adoptNotice} ${variantClass}`}>
+          {animal.nome} já encontrou um lar!
+        </p>
+      );
+    }
+
+    if (isOng) {
+      return (
+        <p className={`${styles.adoptNotice} ${variantClass}`}>
+          Contas de ONG não podem solicitar adoções.
+        </p>
+      );
+    }
+
+    return (
+      <button
+        className={`${styles.adoptButton} ${variantClass}`}
+        onClick={() => setIsAdoptionModalOpen(true)}
+      >
+        Quero adotar {animal.sexo === "M" ? "o" : "a"} {animal.nome}
+      </button>
+    );
+  };
 
   const storyText = animal.historia || animal.descricao;
   const maxLength = 550;
@@ -84,14 +117,15 @@ export default function AnimalInfo({
               <LuHeartOff className={styles.statIcon} />
               <span>{animal.castrado ? "Castrado" : "Não castrado"}</span>
             </div>
+            {animal.distancia && (
+              <div className={styles.statItem}>
+                <LuMapPin className={styles.statIcon} />
+                <span>A {animal.distancia} de você</span>
+              </div>
+            )}
           </div>
 
-          <button
-            className={`${styles.adoptButton} ${styles.adoptButtonMobile}`}
-            onClick={() => setIsAdoptionModalOpen(true)}
-          >
-            Quero adotar {animal.sexo === "M" ? "o" : "a"} {animal.nome}
-          </button>
+          {renderAdoptAction(styles.adoptButtonMobile)}
 
           <h2 className={styles.historyTitle}>Minha História</h2>
           <div className={styles.historySection}>
@@ -114,12 +148,7 @@ export default function AnimalInfo({
         </div>
 
         <div className={styles.rightColumn}>
-          <button
-            className={`${styles.adoptButton} ${styles.adoptButtonDesktop}`}
-            onClick={() => setIsAdoptionModalOpen(true)}
-          >
-            Quero adotar {animal.sexo === "M" ? "o" : "a"} {animal.nome}
-          </button>
+          {renderAdoptAction(styles.adoptButtonDesktop)}
 
           <div className={styles.mapContainer}>
             <iframe
@@ -157,11 +186,13 @@ export default function AnimalInfo({
         </div>
       </div>
 
-      <AdoptionModal
-        isOpen={isAdoptionModalOpen}
-        onClose={() => setIsAdoptionModalOpen(false)}
-        animal={animal}
-      />
+      {canAdopt && (
+        <AdoptionModal
+          isOpen={isAdoptionModalOpen}
+          onClose={() => setIsAdoptionModalOpen(false)}
+          animal={animal}
+        />
+      )}
     </section>
   );
 }

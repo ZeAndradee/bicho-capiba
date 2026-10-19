@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import UserImage from "@/components/UI/UserImage/UserImage";
 import Error from "@/components/UI/Error/Error";
+import Breadcrumb from "@/components/UI/Breadcrumb/Breadcrumb";
 import styles from "./page.module.css";
 
 interface OngFormData extends Partial<AuthUser> {
@@ -329,6 +330,13 @@ export default function DashboardSettings() {
         <Error error={{ message: apiError }} className={styles.errorBanner} />
       )}
       <main className={styles.main}>
+        <Breadcrumb
+          className={styles.breadcrumb}
+          items={[
+            { label: "Dashboard", href: "/ong/dashboard" },
+            { label: "Configurações" },
+          ]}
+        />
         <div className={styles.pageHeader}>
           <h1 className={styles.title}>Configurações</h1>
           <p className={styles.subtitle}>

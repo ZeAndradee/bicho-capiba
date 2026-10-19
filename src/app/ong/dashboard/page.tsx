@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -10,45 +10,57 @@ import DashboardHeader from "@/components/Dashboard/DashboardHeader/DashboardHea
 import DashboardStats from "@/components/Dashboard/DashboardStats/DashboardStats";
 import AnimalCard from "@/components/UI/AnimalsCard/AnimalCard";
 import DonationsSection from "@/components/Dashboard/DonationsSection/DonationsSection";
+import AdoptionRequests from "@/components/Dashboard/AdoptionRequests/AdoptionRequests";
+import { AdoptionCounts } from "@/services/Adoption/Adoption";
 import { RefreshCw } from "lucide-react";
 import styles from "./page.module.css";
 
 export default function Dashboard() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isOng } = useAuth();
+  const router = useRouter();
   const [animals, setAnimals] = useState<OngAnimal[]>([]);
   const [isLoadingAnimals, setIsLoadingAnimals] = useState(true);
   const [filter, setFilter] = useState<string>("todos");
   const [stats, setStats] = useState({
     totalAnimals: 0,
-    adoptedThisMonth: 0,
+    adoptedAnimals: 0,
     totalDonations: 0,
     activeAdoptions: 0,
   });
 
-  useEffect(() => {
-    if (user) {
-      loadAnimals();
-    }
-  }, [user]);
-
-  const loadAnimals = async () => {
+  const loadAnimals = useCallback(async () => {
     try {
       setIsLoadingAnimals(true);
       const data = await fetchOngAnimals();
       const animals = data.result || [];
       setAnimals(animals);
-      setStats({
+      setStats((prev) => ({
+        ...prev,
         totalAnimals: animals.length,
-        adoptedThisMonth: animals.filter(a => a.statusAnimal === "Adotado").length,
-        totalDonations: 0,
-        activeAdoptions: animals.filter(a => a.statusAnimal === "Pendente").length,
-      });
+        adoptedAnimals: animals.filter((a) => a.statusAnimal === "Adotado").length,
+      }));
     } catch (error) {
       console.error("Error loading animals:", error);
     } finally {
       setIsLoadingAnimals(false);
     }
-  };
+  }, []);
+
+  const handleCountsChange = useCallback((counts: AdoptionCounts) => {
+    setStats((prev) => ({ ...prev, activeAdoptions: counts.pendente }));
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && (!user || !isOng)) {
+      router.replace(user ? "/perfil" : "/entrar");
+    }
+  }, [isLoading, user, isOng, router]);
+
+  useEffect(() => {
+    if (user && isOng) {
+      loadAnimals();
+    }
+  }, [user, isOng, loadAnimals]);
 
   const filteredAnimals = animals.filter((animal) => {
     if (filter === "todos") return true;
@@ -64,7 +76,7 @@ export default function Dashboard() {
     return <div className={styles.loading}>Carregando...</div>;
   }
 
-  if (!user) {
+  if (!user || !isOng) {
     return null;
   }
 
@@ -74,6 +86,11 @@ export default function Dashboard() {
 
       <main className={styles.main}>
         <DashboardStats stats={stats} />
+
+        <AdoptionRequests
+          onCountsChange={handleCountsChange}
+          onRequestUpdated={loadAnimals}
+        />
 
         <section className={styles.section}>
           <div className={styles.sectionHeader}>

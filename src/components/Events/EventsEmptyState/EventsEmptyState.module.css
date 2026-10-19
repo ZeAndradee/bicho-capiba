@@ -1,0 +1,87 @@
+.empty {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  width: 100%;
+  padding: 40px 28px 0;
+  border: 2px dashed var(--border-color);
+  border-radius: 20px;
+  background: var(--background-secondary);
+  overflow: hidden;
+}
+
+.ticketHole {
+  width: 44px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--background);
+  margin-bottom: 6px;
+}
+
+.kicker {
+  font-family: var(--title-font);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange-capiba);
+}
+
+.title {
+  font-family: var(--title-font);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  max-width: 420px;
+}
+
+.description {
+  color: var(--text-color);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 440px;
+}
+
+.action {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: var(--orange-capiba);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: filter 0.2s ease;
+}
+
+.action:hover {
+  filter: brightness(0.93);
+}
+
+.silhouette {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  margin-top: 28px;
+  opacity: 0.12;
+}
+
+.compact {
+  padding: 32px 20px 0;
+}
+
+.compact .title {
+  font-size: 1.2rem;
+}
+
+.compact .description {
+  font-size: 0.875rem;
+}
+
+.compact .silhouette {
+  margin-top: 20px;
+}

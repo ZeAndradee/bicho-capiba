@@ -2,14 +2,17 @@
 
 export const runtime = "edge";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import Breadcrumb from "@/components/UI/Breadcrumb/Breadcrumb";
 import AnimalHero from "@/components/Animal/AnimalHero/AnimalHero";
 import AnimalInfo from "@/components/Animal/AnimalInfo/AnimalInfo";
 import AnimalSkeleton from "@/components/UI/Skeletons/AnimalSkeleton/AnimalSkeleton";
 import { fetchAnimalById } from "@/services/Animals/Animal";
 import styles from "./page.module.css";
 import { formatAge } from "@/utils/formatters";
+import { formatDistance, getDistanceKm } from "@/utils/geo";
+import { useUserLocation } from "@/hooks/useUserLocation";
 
 interface ApiAnimal {
   uuid: string;
@@ -34,6 +37,14 @@ interface ApiAnimal {
     nome: string;
     email: string;
     telefone: string;
+    rua: string | null;
+    numero: string | null;
+    bairro: string | null;
+    cidade: string | null;
+    estado: string | null;
+    complemento: string | null;
+    latitude: string | null;
+    longitude: string | null;
   };
   fotos: Array<{
     url: string;
@@ -53,6 +64,7 @@ interface Animal {
   descricao: string;
   historia: string;
   castrado: boolean;
+  statusAnimal: string;
 }
 
 interface Ong {
@@ -60,7 +72,20 @@ interface Ong {
   endereco: string;
   telefone: string;
   imagem: string;
+  latitude: string | null;
+  longitude: string | null;
 }
+
+const formatOngAddress = (ong: ApiAnimal["ong"]): string => {
+  const street = [ong.rua, ong.numero].filter(Boolean).join(", ");
+  const streetLine = [street, ong.complemento].filter(Boolean).join(" - ");
+  const cityLine = [ong.cidade, ong.estado].filter(Boolean).join(" - ");
+  const address = [streetLine, ong.bairro, cityLine]
+    .filter(Boolean)
+    .join(", ");
+
+  return address || "Endereço não disponível";
+};
 
 const transformApiData = (apiData: ApiAnimal): { animal: Animal; ong: Ong } => {
   const animal: Animal = {
@@ -73,19 +98,22 @@ const transformApiData = (apiData: ApiAnimal): { animal: Animal; ong: Ong } => {
     sexo: apiData.sexo,
     idade: formatAge(apiData.dataNascimento),
     raca: apiData.raca,
-    distancia: "N/A",
-    bairroOng: "N/A",
-    cidadeOng: "N/A",
+    distancia: "",
+    bairroOng: apiData.ong.bairro || "Não informado",
+    cidadeOng: apiData.ong.cidade || "Não informado",
     descricao: apiData.historia || "Sem descrição disponível",
     historia: apiData.historia || "Sem história disponível",
     castrado: apiData.castrado === 1,
+    statusAnimal: apiData.statusAnimal,
   };
 
   const ong: Ong = {
     nome: apiData.ong.nome,
-    endereco: "Endereço não disponível",
+    endereco: formatOngAddress(apiData.ong),
     telefone: apiData.ong.telefone,
     imagem: "/icons/capibaCrabOrange.svg",
+    latitude: apiData.ong.latitude,
+    longitude: apiData.ong.longitude,
   };
 
   return { animal, ong };
@@ -100,6 +128,15 @@ export default function AnimalProfile() {
   const [animal, setAnimal] = useState<Animal | null>(null);
   const [ong, setOng] = useState<Ong | null>(null);
   const [loading, setLoading] = useState(true);
+  const { location } = useUserLocation();
+
+  const animalWithDistance = useMemo(() => {
+    if (!animal) return null;
+    const distance = formatDistance(
+      getDistanceKm(location, ong?.latitude, ong?.longitude)
+    );
+    return { ...animal, distancia: distance ?? "" };
+  }, [animal, ong, location]);
 
   useEffect(() => {
     const loadAnimal = async () => {
@@ -130,8 +167,18 @@ export default function AnimalProfile() {
 
   return (
     <div className={styles.page}>
-      <AnimalHero animal={animal} />
-      <AnimalInfo animal={animal} ong={ong} shouldOpenModal={isRedirected} />
+      {animal && (
+        <Breadcrumb
+          className={styles.breadcrumb}
+          items={[{ label: "Adote", href: "/adote" }, { label: animal.nome }]}
+        />
+      )}
+      <AnimalHero animal={animalWithDistance} />
+      <AnimalInfo
+        animal={animalWithDistance}
+        ong={ong}
+        shouldOpenModal={isRedirected}
+      />
     </div>
   );
 }

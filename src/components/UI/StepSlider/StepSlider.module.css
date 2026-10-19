@@ -1,0 +1,144 @@
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--background);
+}
+
+.invalid {
+  border-color: var(--orange-capiba);
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-height: 2.75rem;
+}
+
+.summary strong {
+  font-family: var(--title-font);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.summary span {
+  font-size: 0.85rem;
+  color: var(--text-color);
+}
+
+.untouched .summary strong {
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.range {
+  --fill: 0%;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: pan-y;
+}
+
+.range:focus-visible {
+  outline: 3px solid var(--yellow-capiba);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--orange-capiba) var(--fill),
+    var(--border-color) var(--fill)
+  );
+}
+
+.range::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--border-color);
+}
+
+.range::-moz-range-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--orange-capiba);
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  margin-top: -10px;
+  border: 4px solid var(--background);
+  border-radius: 50%;
+  background: var(--orange-capiba);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 4px solid var(--background);
+  border-radius: 50%;
+  background: var(--orange-capiba);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.untouched .range::-webkit-slider-thumb {
+  background: var(--text-color);
+  opacity: 0.5;
+}
+
+.untouched .range::-moz-range-thumb {
+  background: var(--text-color);
+  opacity: 0.5;
+}
+
+.untouched .range::-moz-range-progress {
+  background: transparent;
+}
+
+.ticks {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.25rem;
+}
+
+.tick {
+  flex: 1;
+  min-height: 36px;
+  padding: 0.25rem;
+  border: none;
+  background: none;
+  color: var(--text-color);
+  font-family: var(--body-font);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+
+.tick:first-child {
+  text-align: left;
+}
+
+.tick:last-child {
+  text-align: right;
+}
+
+.tickActive {
+  color: var(--orange-capiba);
+  font-weight: 700;
+}

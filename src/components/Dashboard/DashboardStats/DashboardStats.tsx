@@ -3,7 +3,7 @@ import styles from "./DashboardStats.module.css";
 
 interface Stats {
   totalAnimals: number;
-  adoptedThisMonth: number;
+  adoptedAnimals: number;
   totalDonations: number;
   activeAdoptions: number;
 }
@@ -21,13 +21,13 @@ export default function DashboardStats({ stats }: DashboardStatsProps) {
       color: "orange",
     },
     {
-      title: "Adoções este Mês",
-      value: stats.adoptedThisMonth,
+      title: "Animais Adotados",
+      value: stats.adoptedAnimals,
       icon: Heart,
       color: "green",
     },
     {
-      title: "Adoções em Andamento",
+      title: "Solicitações Pendentes",
       value: stats.activeAdoptions,
       icon: Clock,
       color: "yellow",

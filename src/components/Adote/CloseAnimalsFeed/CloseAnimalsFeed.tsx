@@ -8,6 +8,8 @@ import CloseAnimalsFeedSkeleton from "@/components/UI/Skeletons/CloseAnimalsFeed
 import AnimalCardSkeleton from "@/components/UI/Skeletons/AnimalCardSkeleton";
 import { fetchAnimals } from "@/services/Animals/Animal";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useUserLocation } from "@/hooks/useUserLocation";
+import { formatDistance, getDistanceKm } from "@/utils/geo";
 import {
   FaMars,
   FaVenus,
@@ -53,10 +55,10 @@ const genderOptions: FilterOption[] = [
 ];
 
 const distanceOptions: FilterOption[] = [
-  { value: "0.", label: "Menos de 1km", icon: <FaLocationDot /> },
-  { value: "1.", label: "1-2km" },
-  { value: "2.", label: "2-3km" },
-  { value: "3.", label: "3km+" },
+  { value: "5", label: "Até 5km", icon: <FaLocationDot /> },
+  { value: "10", label: "Até 10km" },
+  { value: "25", label: "Até 25km" },
+  { value: "50", label: "Até 50km" },
 ];
 
 const speciesOptions: FilterOption[] = [
@@ -78,11 +80,17 @@ const CloseAnimalsFeed = () => {
       raca: { nome: string };
       especie: string;
       fotos?: Array<{ url: string }>;
-      ong?: { bairro?: string; cidade?: string };
+      ong?: {
+        bairro?: string;
+        cidade?: string;
+        latitude?: string | null;
+        longitude?: string | null;
+      };
       isLiked: boolean;
     }>
   >([]);
   const [loading, setLoading] = useState(true);
+  const { location } = useUserLocation();
   const [loadingMore, setLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -176,11 +184,25 @@ const CloseAnimalsFeed = () => {
     (filter) => filter !== ""
   );
 
-  const filteredAnimals = animals.filter((animal) => {
+  const animalsWithDistance = animals.map((animal) => ({
+    ...animal,
+    distanceKm: getDistanceKm(
+      location,
+      animal.ong?.latitude,
+      animal.ong?.longitude
+    ),
+  }));
+
+  const filteredAnimals = animalsWithDistance.filter((animal) => {
     if (filters.idade && animal.idade !== filters.idade.replace(" anos", ""))
       return false;
     if (filters.sexo && animal.sexo !== filters.sexo) return false;
-    if (filters.distance) return false;
+    if (
+      filters.distance &&
+      (animal.distanceKm === null ||
+        animal.distanceKm > Number(filters.distance))
+    )
+      return false;
     if (
       filters.especie &&
       (speciesMap[animal.especie] || animal.especie.toLowerCase()) !==
@@ -312,7 +334,7 @@ const CloseAnimalsFeed = () => {
                 nome: animal.raca?.nome || "Sem raça definida",
                 especieId: 0,
               }}
-              distancia="Próximo"
+              distancia={formatDistance(animal.distanceKm) ?? ""}
               bairroOng={animal.ong?.bairro || "Não informado"}
               cidadeOng={animal.ong?.cidade || "Não informado"}
               isFavorite={animal.isLiked}

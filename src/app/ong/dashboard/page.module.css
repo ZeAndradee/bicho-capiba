@@ -189,5 +189,35 @@
   .addAnimalButton {
     width: 100%;
     justify-content: center;
+    min-height: 48px;
+  }
+
+  .filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 -1rem 1rem;
+    padding: 0 1rem;
+    scrollbar-width: none;
+  }
+
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filterButton {
+    flex-shrink: 0;
+    min-height: 40px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 1rem 0.75rem;
+  }
+
+  .section {
+    padding: 1rem;
+    border-radius: 16px;
   }
 }

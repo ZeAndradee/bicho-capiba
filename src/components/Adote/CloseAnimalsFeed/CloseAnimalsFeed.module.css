@@ -146,9 +146,14 @@
     margin-bottom: 1rem;
   }
 
+  .header h1 {
+    font-size: 1.6rem;
+  }
+
   .filters {
     width: 100%;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
   }
 
@@ -161,6 +166,9 @@
 
   .resetButton {
     align-self: flex-start;
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 12px;
   }
 
   .noResults {

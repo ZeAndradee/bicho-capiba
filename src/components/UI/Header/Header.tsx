@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import UserImage from "../UserImage/UserImage";
+import RouteProgress from "../RouteProgress/RouteProgress";
+import { getEventCity } from "@/data/eventCities";
 import {
   User,
   Settings,
@@ -17,6 +19,7 @@ import styles from "./Header.module.css";
 const navigationItems = [
   { label: "Inicio", href: "/" },
   { label: "Adote", href: "/adote" },
+  { label: "Eventos", href: "/eventos" },
   { label: "Faça uma doação", href: "/doacao" },
   { label: "Meu Pet dos Sonhos", href: "/pet-sonhos" },
 ];
@@ -34,12 +37,18 @@ export default function Header() {
     useState(false);
   const { user, logout, isLoading, isOng } = useAuth();
   const userDropdownRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   const isAuthPage =
     pathname === "/entrar" ||
     pathname === "/cadastro" ||
     pathname === "/cadastro-ong" ||
     pathname === "/cadastro-sucesso";
+
+  const eventCitySlug = pathname.match(/^\/eventos\/([^/]+)$/)?.[1];
+  const isOverHeroImage = Boolean(
+    eventCitySlug && getEventCity(eventCitySlug)?.heroImage
+  );
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -107,7 +116,12 @@ export default function Header() {
   };
 
   return (
-    <header className={styles.header}>
+    <header
+      ref={headerRef}
+      className={`${styles.header} ${
+        isOverHeroImage ? styles.transparent : ""
+      }`}
+    >
       <div className={styles.logo}>
         <Link href={"/"}>
           <Image
@@ -336,6 +350,10 @@ export default function Header() {
       {isMenuOpen && (
         <div className={styles.overlay} onClick={toggleMenu}></div>
       )}
+
+      <Suspense fallback={null}>
+        <RouteProgress anchorRef={headerRef} />
+      </Suspense>
     </header>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import ImageWithFallback from "@/components/UI/Images/ImageWithFallback";
 import styles from "./AnimalHero.module.css";
@@ -24,6 +24,7 @@ interface AnimalHeroProps {
 
 export default function AnimalHero({ animal }: AnimalHeroProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   if (!animal) {
     return null;
@@ -46,6 +47,22 @@ export default function AnimalHero({ animal }: AnimalHeroProps) {
 
   const hasMultipleImages = images.length > 1;
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || !hasMultipleImages) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(deltaX) < 40) return;
+    if (deltaX < 0) {
+      nextImage();
+    } else {
+      prevImage();
+    }
+  };
+
   return (
     <section className={styles.hero}>
       <div className={styles.carousel}>
@@ -66,7 +83,11 @@ export default function AnimalHero({ animal }: AnimalHeroProps) {
           </div>
         )}
 
-        <div className={styles.mainImageContainer}>
+        <div
+          className={styles.mainImageContainer}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <ImageWithFallback
             src={images[currentImageIndex]}
             alt={`${nome} - Imagem ${currentImageIndex + 1}`}
